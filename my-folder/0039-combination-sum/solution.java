@@ -1,44 +1,35 @@
 class Solution {
-    public List<List<Integer>> combinationSum(int[] candidates, int target) {    
-        	
-		// int [] candidates=[1,4,2,6];
-		// int target=7;
-        List<List<Integer>> rs=new ArrayList<>();
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
 
+        List<List<Integer>> fL=new ArrayList<>();
+        combSum(target,0,candidates,new ArrayList<Integer>(),fL);
 
-		comSum(candidates, target, 0, new ArrayList<>(),rs);
+        return fL;
 
-		//System.out.println(rs);
-
-        return rs;
-	
+        
     }
 
-    public static void comSum(int [] can, int remSum, int currI, List<Integer> currC, List<List<Integer>> rs){
+    public static void combSum(int remsum, int currI, int[] orgA, List<Integer> currL, List<List<Integer>> finalL){
+        System.out.println("Call par "+remsum+","+currI+","+currL);
+        if(remsum<0 || currI>=orgA.length){
+            return;
+        }
 
-		//remSum==0 
-		if(remSum==0){
-            //System.out.println("Current C "+currC);
-			rs.add(new ArrayList<>(currC));
-            //System.out.println("Current Final "+rs);
-			return;
-		}
-		if(remSum<0 || currI>=can.length){
-			return;
-		}
+        if(remsum==0){
+            finalL.add(new ArrayList<>(currL));
+            return;
+        }
 
-		// for(int i=currI;i<can.length;i++){
-		// 	currC.add(can[i]);
-        //     //It will add all the possible combinations where cuurent element is the first element
-		// 	comSum(can,remSum-can[i],i,currC,rs);
-		// 	currC.remove(currC.size()-1);
-		// }
-        currC.add(can[currI]);
-        comSum(can,remSum-can[currI],currI,currC,rs);
+        remsum=remsum-orgA[currI];
+        currL.add(orgA[currI]);
+        combSum(remsum,currI,orgA,currL,finalL);
 
-        currC.remove(currC.size()-1);
+        currL.remove(currL.size()-1);
+        remsum=remsum+orgA[currI];
+        System.out.println("RemSum "+ remsum);
+        combSum(remsum,currI+1,orgA,currL,finalL);
 
-        comSum(can,remSum,currI+1,currC,rs);
 
-	}
+    }
+
 }
