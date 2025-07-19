@@ -1,36 +1,45 @@
 class Solution {
     public int[][] merge(int[][] intervals) {
 
-        //Sort the intervals
+        if(intervals.length==0){
+            return new int[0][];
+        }
+
+        //Custom sorting of 2d array
+
         Arrays.sort(intervals,(a,b)->Integer.compare(a[0],b[0]));
 
-        List<int []> merged =new ArrayList<>();
+        //Using list of Int array 
 
-        merged.add(intervals[0]);
+        List<int []> merged= new ArrayList<>();
 
-        //System.out.println(Arrays.deepToString(intervals));
-        int cI=0;
+        //Add one element to the list
+        int [] current=intervals[0];
+
+        merged.add(current);
+
+        //Iterating through the intervals and add overlapping intervals to the list
+
         for (int [] e: intervals){
-            cI=merged.size()-1;
-            if(e[0]<=merged.get(cI)[1]){
-                int[] nE=new int []{Math.min(e[0],merged.get(cI)[0]),Math.max(e[1],merged.get(cI)[1])};
-                merged.remove(cI);
-                merged.add(nE);
+            //Always take care of the last element
+
+            if(current[1]>=e[0]){
+                current[1]=Math.max(current[1],e[1]);
             }
             else{
-                merged.add(e);
+                current=e;
+                merged.add(current);
             }
+
         }
 
-        int [][] finalMerged=new int[merged.size()][2];
-        int nI=0;
-        for(int []e:merged){
-            finalMerged[nI]=e;
-            nI++;
-        }
 
-        return finalMerged;
-        //return new int[0][0];
-        
-    }
+        //Convert the List to an array
+
+        int [][] finMerged=merged.toArray(new int[merged.size()][]);
+
+        return finMerged;
+                
+    
+}
 }
