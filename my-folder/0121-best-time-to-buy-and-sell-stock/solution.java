@@ -1,27 +1,26 @@
 class Solution {
-    public int maxProfit(int[] price) {
-        int min = price[0];
-        int k = 0;
-        int l = 0;
-        int ans = 0;
-        int max = Integer.MIN_VALUE;
-        for (int i = 0; i < price.length; i++) {
+    public int maxProfit(int[] prices) {
 
-            if (min > price[i]) {
-                min = price[i];
+        //currMin 7     1   1   1   1   1
+        //currDiff 0  -6    4   2   6   4
+        //maxDiff 4 5
 
-                max = min;
+        int currMin=prices[0];
+        int currDiff=0;
+        int maxDiff=0;
 
-            }
-            if (max < price[i]) {
-                max = price[i];
 
-        }
-        
-        ans=Math.max(ans,((max+1)-(min+1)));
-        
+        for(int p : prices){
+            
+            //Trick is only running minimum and maximum we need to take. If something is gone we don't need to go back.
+
+
+            currMin=Math.min(p,currMin);
+            currDiff=p - currMin;
+            maxDiff=Math.max(currDiff,maxDiff);
         }
 
-    return ans;
+        return maxDiff;
+        
     }
 }
