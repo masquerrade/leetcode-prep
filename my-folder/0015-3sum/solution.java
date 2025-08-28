@@ -1,45 +1,64 @@
-//HashSet approach
 class Solution {
+    //Two pointer approach
     public List<List<Integer>> threeSum(int[] nums) {
-        //[-1,0,1,2,-1,-4]
-        //Sort
+        //I need to sort the array and go from the beginning to the end so that the same triplet is not taken multiple times.
         Arrays.sort(nums);
-        
-        //List<List<Integer>> lst= new ArrayList<>();
+        //System.out.println(Arrays.toString(nums));
 
-        //To avaoid duplicate I need to store in set and return
-        Set<List<Integer>> fin=new HashSet<>();
+        List<List<Integer>> lst=new ArrayList<>();
 
-        for(int i=0;i<nums.length;i++){
-            //For first go duplicates should also be considered
-            int j=i+1;
-            //Two Sum approach
-            Set<Integer> set= new HashSet<>();
-            while(j<nums.length){
-                int target=0-nums[i]-nums[j];
-                // System.out.println("i="+i+" j="+j+" target="+target);
-                // System.out.println("Set="+set);
-                if(set.contains(target)){
-                    //Add the new list
-                    List<Integer> triplet=Arrays.asList(nums[i],nums[j],target);
-                    //Sorting list
-                    triplet.sort(Comparator.naturalOrder());
-                    fin.add(triplet);
+        for(int i=0;i<nums.length-2;i++)
+        {
+
+            
+            int l=i+1;
+            int r=nums.length-1;
+         
+            
+            //System.out.println("l="+l+" r="+r);
+            while(l<r){
+                //System.out.println("i="+i+" l="+l+" r="+r);
+                int sum=nums[i]+nums[l]+nums[r];
+                //System.out.println(sum);
+                if(sum==0){
+                    //Making a list of 3 numbers
+                    lst.add(Arrays.asList(nums[i],nums[l],nums[r]));
+
+                    //This condition need to be reversed as we need to checck l<r before accewssing the element
+                    while(l<r&&nums[l]==nums[l+1]){
+                        l++;
+                    }
+
+                    while(l<r&&nums[r]==nums[r-1]){
+                        r--;
+                    }
+
+                    //When sum is 0 then also l and r should update
+                    l++;
+                    r--;                   
+                }
+                //Write terminating condition of while loop before internal logic
+                //Simply we can't move both the pointers . We have to move one pointer at a time
+                //  l++;
+                //  r--;
+                else if(sum<0){
+                    l++;
                 }
                 else{
-                    //Add the value in the set
-                    set.add(nums[j]);
+                    r--;
                 }
-
-                j++;
+                //System.out.println(lst);
             }
-            while(i<(nums.length-1) && nums[i]==nums[i+1]){
+
+            //Skipping the duplicates
+            while(nums[i]==nums[i+1]&&i<nums.length-2){
                 i++;
             }
+
+            //[-1,0,1,2,-1,-4]
+            
         }
 
-        return new ArrayList<>(fin);
-        
-        
+        return lst;
     }
 }
