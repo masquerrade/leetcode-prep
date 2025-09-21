@@ -1,47 +1,31 @@
 class Solution {
-
-    //Recurcive approach
-    //With memoization also getting time limit exceeded
-    
     public int coinChange(int[] coins, int amount) {
 
-        Map<Integer,Integer> mm=new HashMap<>();
-         mm.put(0,0);
-        return calcCC(coins,amount,mm);            
-        
-    }
+        //[1,2] ->2
+        //[1,]
+        //What is the best approach is to start from the small and find the minimum coins needed for that and then for a bigger value use the current coin and take the minimum coins needed for the remaining amount from the already calculated value
 
-    public int calcCC(int [] coins,int amount,Map<Integer,Integer> mm){
-        
-        if(amount<0){
-            return -1;
-        }
-        else if(mm.containsKey(amount)){
-            return mm.get(amount);
-        }
+        int [] dp=new int[amount+1];
+        Arrays.fill(dp,amount+1);
 
-        else{
+        dp[0]=0;
 
-        int minC=amount+1;
-
-        for(int c:coins){
-            int cr=calcCC(coins,amount-c,mm);
-            if(cr != -1){
-                minC=Math.min(minC,1+cr);
+        for(int i=0;i<=amount;i++ ){
+            //I've to calculate minimum for each amount less than the final amount
+            for(int c:coins){
+                if(c<=i){
+                    //I'm checking the minimum by using each coin as the last coin
+                    dp[i]=Math.min(1+dp[i-c],dp[i]);
+                }
             }
-            
         }
-
-        if(minC<amount+1){
-             mm.put(amount,minC);
-            return minC;
+        if(dp[amount]<amount+1){
+            return dp[amount];
         }
         else{
-            mm.put(amount,-1);
             return -1;
         }
-        
 
+        
     }
-}
 }
