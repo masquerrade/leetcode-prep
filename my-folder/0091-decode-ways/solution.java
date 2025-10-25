@@ -1,41 +1,84 @@
 class Solution {
     public int numDecodings(String s) {
 
-        int n=s.length();
+        //"11106"
+        //1->T
+        //No of ways we can decode the previous string ,if current number is valid + number of ways we can decode the last 2nd string if previous two numbers are valid
+        //If any invalid string is present then the path is blocked
+        //Two back for decode ways for 2 back
+        //One back for decode ways for 1 back
 
-        if(s.charAt(0)=='0'){
-            return 0;
-        }
+        int n2=0;
+        int n1=1;
 
-        int i1=1;
-        int i2=1;
+        //Extract the first letter
+        //Check valid and assign this to n1 and update n2
+        //Then check the second letter. 
 
-        for(int i=1;i<n;i++){
-            int curr=0;
-
-            //last char
-            int n1=s.charAt(i)-'0';
-
-            if(n1>0){
-                curr+=i1;
+        //How to extract a single caharacter
+        for(int i=0;i<s.length();i++){
+            int c=0;
+            int c1=s.charAt(i)-'0';
+            //If the current char is valid take one back
+            //Then check for 2 chars
+            //No of decodings possible
+            if(c1>0 ){
+                c+=n1;
+            }
+            
+            int c2=(i-1>=0)?Integer.parseInt(s.substring(i-1,i+1)):0;
+            if(c2>9&c2<=26){
+                c+=n2;
             }
 
-            int n2=Integer.parseInt(s.substring(i-1,i+1));
-            //This eliminates 01,02 like that
-            if(n2<=26 &&n2>9){
-                curr+=i2;
-            }
-            i2=i1;
-            i1=curr;
+            n2=n1;
+            n1=c;
         }
-
-
-
-
-        return i1;
         
+        return n1;
     }
 }
+
+
+
+// class Solution {
+//     public int numDecodings(String s) {
+
+//         int n=s.length();
+
+//         if(s.charAt(0)=='0'){
+//             return 0;
+//         }
+
+//         int i1=1;
+//         int i2=1;
+
+//         for(int i=1;i<n;i++){
+//             int curr=0;
+
+//             //last char
+//             int n1=s.charAt(i)-'0';
+
+//             if(n1>0){
+//                 curr+=i1;
+//             }
+
+//             int n2=Integer.parseInt(s.substring(i-1,i+1));
+//             //This eliminates 01,02 like that
+//             if(n2<=26 &&n2>9){
+//                 curr+=i2;
+//             }
+//             i2=i1;
+//             i1=curr;
+//         }
+
+
+
+
+//         return i1;
+        
+//     }
+// }
 
 
 //My first solution
