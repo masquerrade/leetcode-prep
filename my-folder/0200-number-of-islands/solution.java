@@ -1,3 +1,50 @@
+
+
+
+//Practice 1
+//Start dfs as soon as you find 1 and sink the land
+//Every time dfs is called incr the counter by 1
+
+class Solution {
+    public int numIslands(char[][] grid) {
+        if (grid == null || grid.length == 0) return 0;
+
+        int islandCount = 0;
+        int rows = grid.length;
+        int cols = grid[0].length;
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                // If we find land, increment count and sink the whole island
+                if (grid[i][j] == '1') {
+                    islandCount++;
+                    sinkIsland(grid, i, j, rows, cols);
+                }
+            }
+        }
+        return islandCount;
+    }
+
+    private void sinkIsland(char[][] grid, int r, int c, int rows, int cols) {
+        // Boundary checks and water check
+        if (r < 0 || r >= rows || c < 0 || c >= cols || grid[r][c] != '1') {
+            return;
+        }
+
+        // Mark as visited (sink the land)
+        grid[r][c] = '0'; 
+
+        // Visit neighbors (Up, Down, Left, Right)
+        sinkIsland(grid, r + 1, c, rows, cols);
+        sinkIsland(grid, r - 1, c, rows, cols);
+        sinkIsland(grid, r, c + 1, rows, cols);
+        sinkIsland(grid, r, c - 1, rows, cols);
+    }
+}
+//x
+
+
+
 // //DFS approach
 // class Solution {
 //     public int numIslands(char[][] grid) {
@@ -148,71 +195,72 @@
 
 
 //Gemini BFS solution
-class Solution {
-    public int numIslands(char[][] grid) {
-        // Handle edge case of null or empty grid
-        if (grid == null || grid.length == 0) {
-            return 0;
-        }
+//BFS helps in layer by layer traversal. One group of neighbour at a time
+// class Solution {
+//     public int numIslands(char[][] grid) {
+//         // Handle edge case of null or empty grid
+//         if (grid == null || grid.length == 0) {
+//             return 0;
+//         }
 
-        int numRows = grid.length;
-        int numCols = grid[0].length;
-        int islandCount = 0;
+//         int numRows = grid.length;
+//         int numCols = grid[0].length;
+//         int islandCount = 0;
 
-        // Iterate through each cell of the grid
-        for (int r = 0; r < numRows; r++) {
-            for (int c = 0; c < numCols; c++) {
-                // If we find a piece of land ('1'), start a BFS to find all its parts
-                if (grid[r][c] == '1') {
-                    islandCount++; // Found a new island
-                    bfs(grid, r, c); // Sink the entire island
-                }
-            }
-        }
+//         // Iterate through each cell of the grid
+//         for (int r = 0; r < numRows; r++) {
+//             for (int c = 0; c < numCols; c++) {
+//                 // If we find a piece of land ('1'), start a BFS to find all its parts
+//                 if (grid[r][c] == '1') {
+//                     islandCount++; // Found a new island
+//                     bfs(grid, r, c); // Sink the entire island
+//                 }
+//             }
+//         }
 
-        return islandCount;
-    }
-    /**
-     * Helper method to perform BFS and sink the current island.
-     * It uses a queue to find all connected '1's and changes them to '0's.
-     * @param grid The grid of land and water.
-     * @param startR The starting row index for the BFS.
-     * @param startC The starting column index for the BFS.
-     */
-    private void bfs(char[][] grid, int startR, int startC) {
-        Queue<int[]> queue = new LinkedList<>();
+//         return islandCount;
+//     }
+//     /**
+//      * Helper method to perform BFS and sink the current island.
+//      * It uses a queue to find all connected '1's and changes them to '0's.
+//      * @param grid The grid of land and water.
+//      * @param startR The starting row index for the BFS.
+//      * @param startC The starting column index for the BFS.
+//      */
+//     private void bfs(char[][] grid, int startR, int startC) {
+//         Queue<int[]> queue = new LinkedList<>();
         
-        // Add the starting cell to the queue
-        queue.offer(new int[]{startR, startC});
-        // Mark the starting cell as visited by sinking it immediately
-        grid[startR][startC] = '0'; 
+//         // Add the starting cell to the queue
+//         queue.offer(new int[]{startR, startC});
+//         // Mark the starting cell as visited by sinking it immediately
+//         grid[startR][startC] = '0'; 
 
-        int numRows = grid.length;
-        int numCols = grid[0].length;
+//         int numRows = grid.length;
+//         int numCols = grid[0].length;
         
-        // Define the 4 directions to explore (up, down, left, right)
-        int[][] directions = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+//         // Define the 4 directions to explore (up, down, left, right)
+//         int[][] directions = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
 
-        while (!queue.isEmpty()) {
-            int[] currentCell = queue.poll();
-            int r = currentCell[0];
-            int c = currentCell[1];
+//         while (!queue.isEmpty()) {
+//             int[] currentCell = queue.poll();
+//             int r = currentCell[0];
+//             int c = currentCell[1];
 
-            // Explore all 4 neighbors of the current cell
-            for (int[] dir : directions) {
-                int newR = r + dir[0];
-                int newC = c + dir[1];
+//             // Explore all 4 neighbors of the current cell
+//             for (int[] dir : directions) {
+//                 int newR = r + dir[0];
+//                 int newC = c + dir[1];
                 
-                // Check if the neighbor is valid (within bounds and is land)
-                if (newR >= 0 && newR < numRows && newC >= 0 && newC < numCols && grid[newR][newC] == '1') {
-                    // Add the valid neighbor to the queue to visit later
-                    queue.offer(new int[]{newR, newC});
-                    // Mark it as visited immediately to avoid adding it multiple times
-                    grid[newR][newC] = '0';
-                }
-            }
-        }
-    }
-}
+//                 // Check if the neighbor is valid (within bounds and is land)
+//                 if (newR >= 0 && newR < numRows && newC >= 0 && newC < numCols && grid[newR][newC] == '1') {
+//                     // Add the valid neighbor to the queue to visit later
+//                     queue.offer(new int[]{newR, newC});
+//                     // Mark it as visited immediately to avoid adding it multiple times
+//                     grid[newR][newC] = '0';
+//                 }
+//             }
+//         }
+//     }
+// }
 
 
