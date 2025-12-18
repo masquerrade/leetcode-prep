@@ -1,3 +1,40 @@
+class Solution {
+    public int[][] floodFill(int[][] image, int sr, int sc, int color) {
+
+        //If image is empty or null return the same 
+        int orgColour=image[sr][sc];
+
+        if(orgColour == color){
+            return image;
+        }
+
+        //Whatever the colour on the source node call dfs
+        //Also I need to keep track of the original colour
+        dfs(image,sr,sc,orgColour,color);
+
+        return image;
+        
+    }
+
+    private void dfs(int[][] image,int r,int c,int orgColour,int newColour){
+        //Check when  to not paint the current row
+        int R=image.length;
+        int C=image[0].length;
+
+        if(r<0||r>=R||c<0||c>=C||image[r][c]!=orgColour){
+            return;
+        }
+
+        image[r][c]=newColour;
+
+        dfs(image,r+1,c,orgColour,newColour);
+        dfs(image,r,c+1,orgColour,newColour);
+        dfs(image,r-1,c,orgColour,newColour);
+        dfs(image,r,c-1,orgColour,newColour);
+
+    }
+}
+
 // class Solution {
 //     public int[][] floodFill(int[][] image, int sr, int sc, int color) {
 
@@ -103,50 +140,50 @@
 // }
 
 //BFS solution
-class Solution {
-    public int[][] floodFill(int[][] image, int sr, int sc, int newColor) {
-        int originalColor = image[sr][sc];
+// class Solution {
+//     public int[][] floodFill(int[][] image, int sr, int sc, int newColor) {
+//         int originalColor = image[sr][sc];
         
-        if (originalColor == newColor) {
-            return image;
-        }
+//         if (originalColor == newColor) {
+//             return image;
+//         }
         
-        int R = image.length;
-        int C = image[0].length;
+//         int R = image.length;
+//         int C = image[0].length;
         
-        // Queue for BFS, storing {row, col} pairs
-        Queue<int[]> queue = new LinkedList<>();
+//         // Queue for BFS, storing {row, col} pairs
+//         Queue<int[]> queue = new LinkedList<>();
         
-        // Add the starting pixel to the queue and paint it
-        queue.offer(new int[]{sr, sc});
-        image[sr][sc] = newColor;
+//         // Add the starting pixel to the queue and paint it
+//         queue.offer(new int[]{sr, sc});
+//         image[sr][sc] = newColor;
         
-        // Define the 4 directions (up, down, left, right)
-        int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+//         // Define the 4 directions (up, down, left, right)
+//         int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
         
-        while (!queue.isEmpty()) {
-            // Get the current pixel
-            int[] pixel = queue.poll();
-            int r = pixel[0];
-            int c = pixel[1];
+//         while (!queue.isEmpty()) {
+//             // Get the current pixel
+//             int[] pixel = queue.poll();
+//             int r = pixel[0];
+//             int c = pixel[1];
             
-            // Check all 4 neighbors
-            for (int[] dir : directions) {
-                int newR = r + dir[0];
-                int newC = c + dir[1];
+//             // Check all 4 neighbors
+//             for (int[] dir : directions) {
+//                 int newR = r + dir[0];
+//                 int newC = c + dir[1];
                 
-                // Check if the neighbor is valid
-                if (newR >= 0 && newR < R && 
-                    newC >= 0 && newC < C && 
-                    image[newR][newC] == originalColor) { // Must be the original color
+//                 // Check if the neighbor is valid
+//                 if (newR >= 0 && newR < R && 
+//                     newC >= 0 && newC < C && 
+//                     image[newR][newC] == originalColor) { // Must be the original color
                     
-                    // If valid, paint it and add it to the queue to process its neighbors
-                    image[newR][newC] = newColor;
-                    queue.offer(new int[]{newR, newC});
-                }
-            }
-        }
+//                     // If valid, paint it and add it to the queue to process its neighbors
+//                     image[newR][newC] = newColor;
+//                     queue.offer(new int[]{newR, newC});
+//                 }
+//             }
+//         }
         
-        return image;
-    }
-}
+//         return image;
+//     }
+// }
