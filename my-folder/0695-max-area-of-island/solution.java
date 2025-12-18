@@ -1,43 +1,100 @@
-//Gemini solution
+
+//Practice 1
+//Either I need to keep global variable or I need to return area from the helper functions
+//Return area from helper function as I need to calculate max one time for each island
+
 class Solution {
     public int maxAreaOfIsland(int[][] grid) {
-        if (grid == null || grid.length == 0) {
+
+        if(grid==null ||grid.length==0){
             return 0;
         }
 
-        int maxArea = 0; // Use a local variable for maxArea
-        int rows = grid.length;
-        int cols = grid[0].length;
+        int rows=grid.length;
+        int cols=grid[0].length;
+        int maxArea=0;
 
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                if (grid[i][j] == 1) {
-                    // Start a fresh count for this new island
-                    int currentIslandArea = dfs(grid, i, j, rows, cols);
-                    maxArea = Math.max(maxArea, currentIslandArea);
-                }         
+
+        //Iterate throught all the cells and if land is found start dfs to find the  max area
+        for(int i=0;i<rows;i++){
+            for(int j=0;j<cols;j++){
+                if(grid[i][j]==1){
+                    //Area of the island starting from i,j
+                    int area=dfs(grid,rows,cols,i,j);
+                    maxArea=Math.max(maxArea,area);
+                }
+                
             }
         }
         return maxArea;
+        
     }
 
-    // Change return type to int to return the count of cells found
-    private int dfs(int[][] grid, int i, int j, int rows, int cols) {
-        // Base case: if out of bounds or water, return 0 area
-        if (i < 0 || j < 0 || i >= rows || j >= cols || grid[i][j] != 1) {
+    private int dfs(int[][] grid,int rows,int cols,int i,int j){
+
+        //Base case if index is out of bounds or it is not a land
+
+        if(i<0||i>=rows||j<0||j>=cols||grid[i][j]!=1){
             return 0;
         }
 
-        // Mark visited
-        grid[i][j] = 0;
-        
-        // Calculate area: 1 (myself) + sum of all neighbors
-        return 1 + dfs(grid, i + 1, j, rows, cols)
-                 + dfs(grid, i, j + 1, rows, cols)
-                 + dfs(grid, i - 1, j, rows, cols)
-                 + dfs(grid, i, j - 1, rows, cols);
+        //I need to return after aggregating area from all the four directions
+        //To mark the current cell as visited sink the land
+
+        grid[i][j]=0;
+
+        return 
+        1+dfs(grid,rows,cols,i+1,j)
+        +dfs(grid,rows,cols,i,j+1)
+        +dfs(grid,rows,cols,i-1,j)
+        +dfs(grid,rows,cols,i,j-1);
+
     }
 }
+
+
+
+
+// //Gemini solution
+// class Solution {
+//     public int maxAreaOfIsland(int[][] grid) {
+//         if (grid == null || grid.length == 0) {
+//             return 0;
+//         }
+
+//         int maxArea = 0; // Use a local variable for maxArea
+//         int rows = grid.length;
+//         int cols = grid[0].length;
+
+//         for (int i = 0; i < rows; i++) {
+//             for (int j = 0; j < cols; j++) {
+//                 if (grid[i][j] == 1) {
+//                     // Start a fresh count for this new island
+//                     int currentIslandArea = dfs(grid, i, j, rows, cols);
+//                     maxArea = Math.max(maxArea, currentIslandArea);
+//                 }         
+//             }
+//         }
+//         return maxArea;
+//     }
+
+//     // Change return type to int to return the count of cells found
+//     private int dfs(int[][] grid, int i, int j, int rows, int cols) {
+//         // Base case: if out of bounds or water, return 0 area
+//         if (i < 0 || j < 0 || i >= rows || j >= cols || grid[i][j] != 1) {
+//             return 0;
+//         }
+
+//         // Mark visited
+//         grid[i][j] = 0;
+        
+//         // Calculate area: 1 (myself) + sum of all neighbors
+//         return 1 + dfs(grid, i + 1, j, rows, cols)
+//                  + dfs(grid, i, j + 1, rows, cols)
+//                  + dfs(grid, i - 1, j, rows, cols)
+//                  + dfs(grid, i, j - 1, rows, cols);
+//     }
+// }
 
 
 // class Solution {
