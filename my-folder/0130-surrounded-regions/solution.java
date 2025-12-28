@@ -1,3 +1,58 @@
+//Practise 1
+class Solution {
+    public void solve(char[][] board) {
+        int rows=board.length;
+        int cols=board[0].length;
+        //Mitake 1 : Boundary should be proper
+        for(int i=0;i<cols;i++){
+            if(board[0][i]=='O'){
+                dfs(0,i,board);
+            }
+
+            if(board[rows-1][i]=='O'){
+                dfs(rows-1,i,board);
+            }
+        }
+
+        for(int i=0;i<rows;i++){
+            if(board[i][0]=='O'){
+                dfs(i,0,board);
+            }
+
+            if(board[i][cols-1]=='O'){
+                dfs(i,cols-1,board);
+            }
+        }
+
+        for(int i=0;i<rows;i++){
+            for(int j=0;j<cols;j++){
+                if(board[i][j]=='E'){
+                    board[i][j]='O';
+                }
+                //Here else if is needed -Mistake 2
+                else if(board[i][j]=='O'){
+                    board[i][j]='X';
+                }
+            }
+        }
+
+        
+        
+    }
+
+    public void dfs(int row,int col,char[][] board){
+
+        if(row>=0 && row<board.length && col>=0 && col<board[0].length && board[row][col]=='O'){
+            board[row][col]='E';
+            dfs(row+1,col,board);
+            dfs(row,col+1,board);
+            dfs(row-1,col,board);
+            dfs(row,col-1,board);
+
+        }
+    }
+}
+
 // class Solution {
 //     public void solve(char[][] board) {
 
@@ -120,70 +175,70 @@
 
 //Gemini solution
 
-class Solution {
+// class Solution {
     
-    public void solve(char[][] board) {
-        if (board == null || board.length == 0 || board[0].length == 0) {
-            return;
-        }
+//     public void solve(char[][] board) {
+//         if (board == null || board.length == 0 || board[0].length == 0) {
+//             return;
+//         }
 
-        int rows = board.length;
-        int cols = board[0].length;
+//         int rows = board.length;
+//         int cols = board[0].length;
 
-        // 1. Mark "safe" 'O's connected to the top and bottom borders
-        for (int j = 0; j < cols; j++) {
-            if (board[0][j] == 'O') {
-                dfs(board, 0, j); // Top row
-            }
-            if (board[rows - 1][j] == 'O') {
-                dfs(board, rows - 1, j); // Bottom row
-            }
-        }
+//         // 1. Mark "safe" 'O's connected to the top and bottom borders
+//         for (int j = 0; j < cols; j++) {
+//             if (board[0][j] == 'O') {
+//                 dfs(board, 0, j); // Top row
+//             }
+//             if (board[rows - 1][j] == 'O') {
+//                 dfs(board, rows - 1, j); // Bottom row
+//             }
+//         }
 
-        // 2. Mark "safe" 'O's connected to the left and right borders
-        for (int i = 0; i < rows; i++) {
-            if (board[i][0] == 'O') {
-                dfs(board, i, 0); // Left column
-            }
-            if (board[i][cols - 1] == 'O') {
-                dfs(board, i, cols - 1); // Right column
-            }
-        }
+//         // 2. Mark "safe" 'O's connected to the left and right borders
+//         for (int i = 0; i < rows; i++) {
+//             if (board[i][0] == 'O') {
+//                 dfs(board, i, 0); // Left column
+//             }
+//             if (board[i][cols - 1] == 'O') {
+//                 dfs(board, i, cols - 1); // Right column
+//             }
+//         }
 
-        // 3. Flip the board based on the marks
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                if (board[i][j] == 'O') {
-                    // This 'O' was not reached from a border, so it's surrounded.
-                    board[i][j] = 'X';
-                } else if (board[i][j] == '$') {
-                    // This was a "safe" 'O' we marked. Restore it.
-                    board[i][j] = 'O';
-                }
-            }
-        }
-    }
+//         // 3. Flip the board based on the marks
+//         for (int i = 0; i < rows; i++) {
+//             for (int j = 0; j < cols; j++) {
+//                 if (board[i][j] == 'O') {
+//                     // This 'O' was not reached from a border, so it's surrounded.
+//                     board[i][j] = 'X';
+//                 } else if (board[i][j] == '$') {
+//                     // This was a "safe" 'O' we marked. Restore it.
+//                     board[i][j] = 'O';
+//                 }
+//             }
+//         }
+//     }
 
-    /**
-     * Helper DFS function to mark all 'O's connected to a border 'O'.
-     * We change them to '$' to mark them as "safe".
-     */
-    private void dfs(char[][] board, int r, int c) {
-        int rows = board.length;
-        int cols = board[0].length;
+//     /**
+//      * Helper DFS function to mark all 'O's connected to a border 'O'.
+//      * We change them to '$' to mark them as "safe".
+//      */
+//     private void dfs(char[][] board, int r, int c) {
+//         int rows = board.length;
+//         int cols = board[0].length;
 
-        // Stop conditions (out of bounds or not an 'O')
-        if (r < 0 || r >= rows || c < 0 || c >= cols || board[r][c] != 'O') {
-            return;
-        }
+//         // Stop conditions (out of bounds or not an 'O')
+//         if (r < 0 || r >= rows || c < 0 || c >= cols || board[r][c] != 'O') {
+//             return;
+//         }
 
-        // 1. Mark the current cell as "safe"
-        board[r][c] = '$';
+//         // 1. Mark the current cell as "safe"
+//         board[r][c] = '$';
 
-        // 2. Recurse in all 4 directions
-        dfs(board, r + 1, c); // Down
-        dfs(board, r - 1, c); // Up
-        dfs(board, r, c + 1); // Right
-        dfs(board, r, c - 1); // Left
-    }
-}
+//         // 2. Recurse in all 4 directions
+//         dfs(board, r + 1, c); // Down
+//         dfs(board, r - 1, c); // Up
+//         dfs(board, r, c + 1); // Right
+//         dfs(board, r, c - 1); // Left
+//     }
+// }
