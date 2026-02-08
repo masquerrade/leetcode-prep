@@ -1,3 +1,104 @@
+//Bidirectional BFS first try
+//What my strategy is , I'll track neighbours of begin node and end node as a set
+//But I'll find all the neighbours only of the set which has less nodes
+//Every time I need to check in both the frontiers that whether the last word exists
+
+//Steps
+//First I will get the start word and add it to the begin set and take the end word and add it to the end set and add both of them to the visited set.
+//Check the size of beginSet and the endSet and  if beginSet is larger than the endset swap the two
+//Now I need to start with beginSet
+//Iterate through all the elements in the beginset and form all possible combinations of word and check if the word is present in the endSet .If present in the endSet return  n+1
+//If it is not present in the endSet ,then check if the word is present in the wordSet and not present in the visited.Then add this element to the next level.
+//Now all the neighbours of the beginSet is present in the next level.Assign this to the beginSet and continue the process.
+
+
+class Solution {
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        //Converting list to a set
+        Set<String> wordSet=new HashSet<>(wordList);
+
+        Set<String> beginSet=new HashSet<>();
+
+        Set<String> endSet=new HashSet<>();
+
+        Set<String> visited=new HashSet<>();
+
+        if (!wordSet.contains(endWord)){
+            return 0;
+        }
+
+        beginSet.add(beginWord);
+        endSet.add(endWord);
+
+        visited.add(beginWord);
+        visited.add(endWord);
+
+        //In each iteration this should be  empty not outside
+        // Set<String> nextLevel=new HashSet<>();
+
+        int level=1;
+
+        //Till when the loop should run, till any one of beginSet or the endSet becomes empty
+
+        while(!beginSet.isEmpty()){
+            //In each iteration this should be  empty
+            Set<String> nextLevel=new HashSet<>();
+
+            //Compare the size of beginSet and endSet and swap them
+            if(beginSet.size()>endSet.size()){
+                Set<String> tempSet=beginSet;
+                beginSet=endSet;
+                endSet=tempSet;
+            }
+
+            //Iterate through the beginSet
+            for(String w:beginSet){
+
+                //Now I got my first word and I need to get all it' neighbours and add it the nextLevel
+                char[] wChars=w.toCharArray();
+
+                for(int i=0;i<wChars.length;i++){
+                    char currChar=wChars[i]; // At the end I need to replace this character
+
+                    //Iterate through all the 26 chars and change one character one by one 
+                    for(char c='a';c<='z';c++){
+                        if(c==currChar){
+                            continue;
+                        }
+
+                        wChars[i]=c;
+                        String currWord=new String(wChars);
+
+                        //Check whether current word is present in the other frontier
+                        if(endSet.contains(currWord)){
+                            return level+1;
+                        }                        
+
+                        //If the currChar is in wordSet and not in the visited, add it to the visited and to the next level
+
+                        if(wordSet.contains(currWord)&& visited.add(currWord)){
+                            nextLevel.add(currWord);
+                        }
+                    }
+
+                    //Very imp miss
+                    wChars[i]=currChar;
+                    
+                }
+
+            }
+            //Till here I have found all the neighbour of the begin set 
+            //Now I'll continue 
+            level++;
+            beginSet=nextLevel;
+
+        }
+
+        return 0;
+    }
+}
+
+
 // class Solution {
 //     public int ladderLength(String beginWord, String endWord, List<String> wordList) {
 
@@ -96,80 +197,76 @@
 //     }
 // }
 
-//Bidirectional BFS first try
-//What my strategy is , I'll track neighbours of begin node and end node as a set
-//But I'll find all the neighbours only of the set which has less nodes
-
 
 //Gemini optimesed solution
 
-public class Solution {
+// public class Solution {
 
-    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
-        Set<String> dictionary = new HashSet<>(wordList);
+//     public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+//         Set<String> dictionary = new HashSet<>(wordList);
 
-        // Edge case: If endWord is not in the dictionary, a path is impossible.
-        if (!dictionary.contains(endWord)) {
-            return 0;
-        }
+//         // Edge case: If endWord is not in the dictionary, a path is impossible.
+//         if (!dictionary.contains(endWord)) {
+//             return 0;
+//         }
 
-        // We use Sets for the BFS layers to allow O(1) containment checks
-        Set<String> beginSet = new HashSet<>();
-        Set<String> endSet = new HashSet<>();
-        Set<String> visited = new HashSet<>();
+//         // We use Sets for the BFS layers to allow O(1) containment checks
+//         Set<String> beginSet = new HashSet<>();
+//         Set<String> endSet = new HashSet<>();
+//         Set<String> visited = new HashSet<>();
 
-        beginSet.add(beginWord);
-        endSet.add(endWord);
-        // While we don't strictly need to track visited for the very first word
-        // in this specific logic, it's good practice.
-        visited.add(beginWord);
-        visited.add(endWord);
+//         beginSet.add(beginWord);
+//         endSet.add(endWord);
+//         // While we don't strictly need to track visited for the very first word
+//         // in this specific logic, it's good practice.
+//         visited.add(beginWord);
+//         visited.add(endWord);
 
-        int level = 1;
+//         int level = 1;
 
-        while (!beginSet.isEmpty() && !endSet.isEmpty()) {
-            // Optimization: Always expand the smaller set to minimize growth
-            if (beginSet.size() > endSet.size()) {
-                Set<String> temp = beginSet;
-                beginSet = endSet;
-                endSet = temp;
-            }
+//         while (!beginSet.isEmpty() && !endSet.isEmpty()) {
+//             // Optimization: Always expand the smaller set to minimize growth
+//             if (beginSet.size() > endSet.size()) {
+//                 Set<String> temp = beginSet;
+//                 beginSet = endSet;
+//                 endSet = temp;
+//             }
 
-            Set<String> nextLevel = new HashSet<>();
+//             Set<String> nextLevel = new HashSet<>();
 
-            for (String word : beginSet) {
-                char[] charArray = word.toCharArray();
+//             for (String word : beginSet) {
+//                 char[] charArray = word.toCharArray();
 
-                // Try changing every character to 'a'-'z'
-                for (int i = 0; i < charArray.length; i++) {
-                    char originalChar = charArray[i];
+//                 // Try changing every character to 'a'-'z'
+//                 for (int i = 0; i < charArray.length; i++) {
+//                     char originalChar = charArray[i];
 
-                    for (char c = 'a'; c <= 'z'; c++) {
-                        if (c == originalChar) continue;
+//                     for (char c = 'a'; c <= 'z'; c++) {
+//                         if (c == originalChar) continue;
 
-                        charArray[i] = c;
-                        String nextWord = new String(charArray);
+//                         charArray[i] = c;
+//                         String nextWord = new String(charArray);
 
-                        // 1. Check if we met the other search front
-                        if (endSet.contains(nextWord)) {
-                            return level + 1;
-                        }
+//                         // 1. Check if we met the other search front
+//                         if (endSet.contains(nextWord)) {
+//                             return level + 1;
+//                         }
 
-                        // 2. If valid neighbor and not visited, add to next level
-                        if (dictionary.contains(nextWord) && visited.add(nextWord)) {
-                            nextLevel.add(nextWord);
-                        }
-                    }
-                    // Restore original char for next iteration
-                    charArray[i] = originalChar;
-                }
-            }
+//                         // 2. If valid neighbor and not visited, add to next level
+//                         if (dictionary.contains(nextWord) && visited.add(nextWord)) {
+//                             nextLevel.add(nextWord);
+//                         }
+//                     }
+//                     // Restore original char for next iteration
+//                     charArray[i] = originalChar;
+//                 }
+//             }
             
-            // Move to the next level
-            beginSet = nextLevel;
-            level++;
-        }
+//             // Move to the next level
+//             beginSet = nextLevel;
+//             level++;
+//         }
 
-        return 0;
-    }
-}
+//         return 0;
+//     }
+// }
