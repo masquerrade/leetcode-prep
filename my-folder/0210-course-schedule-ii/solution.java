@@ -1,70 +1,141 @@
-//DFS approach
-class Solution {
-    List<Integer> or=new ArrayList<>();
+//First practise
 
+//Make the adj list using prereq and inorder
+
+
+class Solution {
     public int[] findOrder(int numCourses, int[][] prerequisites) {
+
+        //Loop to create the adjacency list and the indegree array
+        //Array of List
+        List<Integer> [] adj=new List[numCourses];
+        int [] inorder=new int[numCourses];
+
+        //While adding the adjacency list ,I need to initialise. Better to initialize the complete thing before
+
+
+        for(int i=0;i<numCourses;i++){
+            adj[i]=new ArrayList<>();
+        }
+
+        //Now iterate prereq array and update adj and inorder
+        for(int [] courses:prerequisites){
+            int course=courses[0];
+            int pre=courses[1];
+
+            adj[pre].add(course);
+            inorder[course]++;
+        }
+
+        //I need queue to store the courses which can be taken
+        Queue<Integer> bfs=new ArrayDeque<>();
+        int totalTaken=0;
+
+        //What do I need to return in the end
+        //Here I can use array also as the final size of array is fixed
+        int [] finalOrder=new int[numCourses];
+
+        for(int i=0;i<numCourses;i++){
+            if(inorder[i]==0){
+                bfs.offer(i);
+            }
+        }
+
+
+        while(!bfs.isEmpty()){
+            int current=bfs.poll();
+            //We can use total taken here
+            finalOrder[totalTaken++]=current;
+            //I need to take the current course and go through all its neighbours and decreasing their indegree. If any of their indegree is 0 add them to the queue
+
+            List<Integer> neighbours=adj[current];//My adjacency list is an array
+
+            for(int neighbour:neighbours){
+                if(--inorder[neighbour]==0){
+                    bfs.offer(neighbour);
+                }
+            }
+        }
+
+        if(totalTaken==numCourses){
+            return finalOrder;           
+        }
+        else{
+            return new int[0];
+        }
+
+        
+    }
+}
+
+
+// //DFS approach
+// class Solution {
+//     List<Integer> or=new ArrayList<>();
+
+//     public int[] findOrder(int numCourses, int[][] prerequisites) {
 
         
 
-        //Make the adjacency map
-        Map<Integer,List<Integer>> adj=new HashMap<>();
+//         //Make the adjacency map
+//         Map<Integer,List<Integer>> adj=new HashMap<>();
 
-        for(int [] p:prerequisites){
-             int pr=p[1];
-             int cr=p[0];
-             List<Integer> pl=adj.getOrDefault(pr,new ArrayList<>());
-             pl.add(cr);
-             //This is needed as first time I need to add
-             adj.put(pr,pl);
-        }
+//         for(int [] p:prerequisites){
+//              int pr=p[1];
+//              int cr=p[0];
+//              List<Integer> pl=adj.getOrDefault(pr,new ArrayList<>());
+//              pl.add(cr);
+//              //This is needed as first time I need to add
+//              adj.put(pr,pl);
+//         }
 
-        //  Go through all the courses and check if any cycle is there
-        int []v=new int[numCourses];
+//         //  Go through all the courses and check if any cycle is there
+//         int []v=new int[numCourses];
 
-        for(int i=0;i<numCourses;i++){
-            if(v[i]!=2){
-                if(dfs(i,adj,v)){
-                    return new int[0];
-                }
-            }
-        }
+//         for(int i=0;i<numCourses;i++){
+//             if(v[i]!=2){
+//                 if(dfs(i,adj,v)){
+//                     return new int[0];
+//                 }
+//             }
+//         }
 
-        //Till now I could have checked all the nodes for the cycle and added elements in the order array in reverse order
-        //System.out.println(or);
-        Collections.reverse(or);
-        //System.out.println(or);
+//         //Till now I could have checked all the nodes for the cycle and added elements in the order array in reverse order
+//         //System.out.println(or);
+//         Collections.reverse(or);
+//         //System.out.println(or);
 
-        return or.stream().mapToInt(Integer::intValue).toArray();
+//         return or.stream().mapToInt(Integer::intValue).toArray();
                 
-    }
+//     }
 
-    public boolean dfs(int i,Map<Integer,List<Integer>>adj,int [] v){
-        v[i]=1;
+//     public boolean dfs(int i,Map<Integer,List<Integer>>adj,int [] v){
+//         v[i]=1;
 
-        if(adj.containsKey(i)){
-            for(int j:adj.get(i)){
-                if(v[j]==1){
-                    return true;
-                }
-                if(v[j]!=2){
-                    //I need to return the result of the recursive call
-                    //Here the mistake is that I will check only the dfs for one neighbour and not for all
-                    if(dfs(j,adj,v)){
-                        return true;
-                    }
-                }
+//         if(adj.containsKey(i)){
+//             for(int j:adj.get(i)){
+//                 if(v[j]==1){
+//                     return true;
+//                 }
+//                 if(v[j]!=2){
+//                     //I need to return the result of the recursive call
+//                     //Here the mistake is that I will check only the dfs for one neighbour and not for all
+//                     if(dfs(j,adj,v)){
+//                         return true;
+//                     }
+//                 }
                 
-            }
-        }
+//             }
+//         }
 
-        v[i]=2;
-        or.add(i);
+//         v[i]=2;
+//         or.add(i);
 
-        //System.out.println(or);
-        return false;
-    }
+//         //System.out.println(or);
+//         return false;
+//     }
 
-}
+// }
 
 
 // //BFS approach
