@@ -13,41 +13,132 @@
  *     }
  * }
  */
- //Recursive inorder traversal 
+
+//  //Attempt 1
+//  //16 min
+// //Passing the range 
+// class Solution {
+//     public boolean isValidBST(TreeNode root) {
+//         if(root == null){
+//             return true;
+//         }
+        
+//         //Helper function to validate the bst within the given randge
+//         //No restriction for root
+//         return validateBst(root,null,null);
+//     }
+
+//     private boolean validateBst(TreeNode node,Integer ll,Integer rl){
+
+//         //Base case
+//         if(node==null){
+//             return true;
+//         }
+
+//         //Don't forget the equality
+//         if(ll!=null && node.val<=ll){
+//             return false;
+//         }
+
+//         if(rl!=null && node.val>=rl){
+//             return false;
+//         }
+
+//         //Here I should not pass null but the actual right limit and left limit
+//         return validateBst(node.left,ll,node.val)&&validateBst(node.right,node.val,rl);
+
+//     }
+// }
+
+//Attempt 1 
+//Using stack inorder traversal
+//22 min
 class Solution {
     public boolean isValidBST(TreeNode root) {
 
-        //I have to take care of the state in each iteration
-        //We cannot use either Integer of Reference valible to pass the state as it is getting updated during the call.
+        //Inorder traversal using stack
+
+        Deque<TreeNode> inorder =new ArrayDeque<>();
+        //Local check 
         TreeNode prev=null;
-        //I need to pass the state array
-        Integer[] prevState=new Integer[1];
-        return isValid(root,prevState);
+        TreeNode current=root;
+
+        while(current !=null || !inorder.isEmpty()){
+
+            //Reach to the left most of the root adding to the stack
+            while(current!=null){
+                inorder.push(current);
+                current=current.left;
+            }
+
+            //Now I'm at the leftmost node and need to compare whether this node is valid
+            current = inorder.pop();
+
+            if(prev!=null && prev.val>=current.val){
+                return false;
+            }
+
+            prev=current;
+
+            //Now I've processed the current node .Move to the right node
+            current=current.right;
+        }
+
+        return true;
         
     }
-
-    public boolean isValid(TreeNode root, Integer[] prev){
-
-        if(root==null){
-            return true;
-        }
-
-        //I need to completely traverse the left of the suntree to update the prev in order to compare the current node with it 
-        if(isValid(root.left,prev)==false){
-            return false;
-        }
-
-        //Now left subtree is completely evaluated that it is valid and the prev would have beeen updated till now
-        if(prev[0]!=null && prev[0]>=root.val){
-            return false;
-        }
-
-        //Now update the prev
-        prev[0]=root.val;
-
-        return isValid(root.right,prev);
-    }
 }
+
+// /**
+//  * Definition for a binary tree node.
+//  * public class TreeNode {
+//  *     int val;
+//  *     TreeNode left;
+//  *     TreeNode right;
+//  *     TreeNode() {}
+//  *     TreeNode(int val) { this.val = val; }
+//  *     TreeNode(int val, TreeNode left, TreeNode right) {
+//  *         this.val = val;
+//  *         this.left = left;
+//  *         this.right = right;
+//  *     }
+//  * }
+//  */
+//  //Recursive inorder traversal 
+// class Solution {
+//     public boolean isValidBST(TreeNode root) {
+
+//         //I have to take care of the state in each iteration
+//         //We cannot use either Integer of Reference valible to pass the state as it is getting updated during the call.
+//         TreeNode prev=null;
+//         //I need to pass the state array
+//         Integer[] prevState=new Integer[1];
+//         return isValid(root,prevState);
+        
+//     }
+
+//     public boolean isValid(TreeNode root, Integer[] prev){
+
+//         if(root==null){
+//             return true;
+//         }
+
+//         //I need to completely traverse the left of the suntree to update the prev in order to compare the current node with it 
+//         if(isValid(root.left,prev)==false){
+//             return false;
+//         }
+
+//         //Now left subtree is completely evaluated that it is valid and the prev would have beeen updated till now
+//         if(prev[0]!=null && prev[0]>=root.val){
+//             return false;
+//         }
+
+//         //Now update the prev
+//         prev[0]=root.val;
+
+//         return isValid(root.right,prev);
+//     }
+// }
 
 // //Iterative inorder traversal gives the sorted list in binary search tree
 // class Solution {
