@@ -16,6 +16,7 @@ jobs:
           github-token: ${{ github.token }}
           leetcode-csrf-token: ${{ secrets.LEETCODE_CSRF_TOKEN }}
           leetcode-session: ${{ secrets.LEETCODE_SESSION }}
+          filter-duplicate-secs: '0' # Instantly updates the file if you resubmit code
           destination-folder: my-folder
           verbose: true
           commit-header: "[LeetCode Sync]"
