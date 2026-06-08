@@ -1,66 +1,147 @@
-//Attempt 3 Djkstra using list of list
-//Time 46 min
+
+//Attempt 4
+//Djikstra  
 class Solution {
     public int networkDelayTime(int[][] times, int n, int k) {
         
-        //List to track the neighbours
-        //size n
-        List<List<int[]>> adj=new ArrayList<>(n+1);
-        //In my loop I need to pop the neighbours for aLL the nodes so need to initialize all
-        for(int i=0;i<=n;i++){
-            //adj.put(i,new ArrayList<int[]>()); There is no put function for the list
-            adj.add(i,new ArrayList<int[]>());
+        //Adj list for quick retreival
+        //{{[1,5],[2,7]},}
+        List<List<int []>> adj=new ArrayList<>();
+
+        //Initialise all the List to empty array list
+        for(int i=0;i<=n;i++){//Imp to add equals
+            // adj.add(i,new ArrayList<>()); This will not give error as added sequentially but better to initialise as below
+            adj.add(i,new ArrayList<>());
         }
 
-        //Now I need to update the list with the neighbours
-        for(int []time:times){
-            int src=time[0];
-            int dst=time[1];
-            int wt=time[2];
-            adj.get(time[0]).add(new int[]{dst,wt});
+        //Populate the adj list
+        for(int[] time:times){
+            adj.get(time[0]).add(new int[]{time[1],time[2]});
         }
-        
-        //Array to track the distance
-        int[] dist=new int[n+1];
-        Arrays.fill(dist,Integer.MAX_VALUE);
-        dist[k]=0;
 
+        //PQ for djikstra
+        // PriorityQueue<int []> pq=new ArrayDeque<>(); THis is wrong
+        Queue<int []> pq=new PriorityQueue<>((a,b)->Integer.compare(a[0],b[0]));
 
-        //Priority queue to track the closest node
-        //I need to use priority queue
-        //Queue<int []> pq=new ArrayDeque<int []>((a,b)->Integer.compare(a[0],b[0]));
-        Queue<int []> pq=new PriorityQueue<int []>((a,b)->Integer.compare(a[0],b[0]));
-
+        //Add source
         pq.offer(new int[]{0,k});
 
-        //Dikstra loop
+        int[] minTimes=new int[n+1];
+        Arrays.fill(minTimes,Integer.MAX_VALUE);
+        minTimes[k]=0;
+        int minTime=0;
+        int noVisited=0;
+
+        //Visit the closest node and explore it's neighbours , while maintaining the shortest distance of the node from the source
         while(!pq.isEmpty()){
-            //Closest element 
-            int[] currNode=pq.poll();
-            
-            //Explore neighbours
-            for(int[]currNb:adj.get(currNode[1])){
-                int currW=currNb[1]+currNode[0];
-                if(currW<dist[currNb[0]]){
-                    dist[currNb[0]]=currW;
-                    pq.offer(new int[]{currW,currNb[0]});
+            int[] current=pq.poll();
+            int dest=current[1];
+            //Time of the node to be popped off last will be the minimum time to travel all node
+            minTime=current[0];
+            //This update should be after the stale entry check
+            // noVisited++;
+
+            //If it is a stale entry coninue the loop
+            // if(minTimes[dest]>minTime){
+            if(minTimes[dest]<minTime){
+                continue;
+            }
+
+            noVisited++;
+
+            //Optimisation .If total no of visited nodes == n then return the minTime
+            if(noVisited==n){
+                return minTime;
+            }
+
+            //Traverse the neighbours of the current node and 
+            for(int[] currTimes:adj.get(dest)){
+                int v=currTimes[0];
+                int w=currTimes[1];
+
+                int newTime=minTime+w;
+                if(newTime<minTimes[v]){
+                    //Don't miss to update minTimes array
+                    minTimes[v]=newTime;
+                    pq.offer(new int[]{newTime,v});
                 }
             }
+
         }
 
-        int maxW=-1;
-        //By now my dist array will have all the min dist
-        for(int i=1;i<=n;i++){
-            if(dist[i]==Integer.MAX_VALUE){
-                return -1;
-            }
-            maxW=Math.max(maxW,dist[i]);
-        }
+        //Loop ends without visiting all the nodes, return -1
+        return -1;
 
-        return maxW;
-        
+
     }
 }
+
+
+
+
+// //Attempt 3 Djkstra using list of list
+// //Time 46 min
+// class Solution {
+//     public int networkDelayTime(int[][] times, int n, int k) {
+        
+//         //List to track the neighbours
+//         //size n
+//         List<List<int[]>> adj=new ArrayList<>(n+1);
+//         //In my loop I need to pop the neighbours for aLL the nodes so need to initialize all
+//         for(int i=0;i<=n;i++){
+//             //adj.put(i,new ArrayList<int[]>()); There is no put function for the list
+//             adj.add(i,new ArrayList<int[]>());
+//         }
+
+//         //Now I need to update the list with the neighbours
+//         for(int []time:times){
+//             int src=time[0];
+//             int dst=time[1];
+//             int wt=time[2];
+//             adj.get(time[0]).add(new int[]{dst,wt});
+//         }
+        
+//         //Array to track the distance
+//         int[] dist=new int[n+1];
+//         Arrays.fill(dist,Integer.MAX_VALUE);
+//         dist[k]=0;
+
+
+//         //Priority queue to track the closest node
+//         //I need to use priority queue
+//         //Queue<int []> pq=new ArrayDeque<int []>((a,b)->Integer.compare(a[0],b[0]));
+//         Queue<int []> pq=new PriorityQueue<int []>((a,b)->Integer.compare(a[0],b[0]));
+
+//         pq.offer(new int[]{0,k});
+
+//         //Dikstra loop
+//         while(!pq.isEmpty()){
+//             //Closest element 
+//             int[] currNode=pq.poll();
+            
+//             //Explore neighbours
+//             for(int[]currNb:adj.get(currNode[1])){
+//                 int currW=currNb[1]+currNode[0];
+//                 if(currW<dist[currNb[0]]){
+//                     dist[currNb[0]]=currW;
+//                     pq.offer(new int[]{currW,currNb[0]});
+//                 }
+//             }
+//         }
+
+//         int maxW=-1;
+//         //By now my dist array will have all the min dist
+//         for(int i=1;i<=n;i++){
+//             if(dist[i]==Integer.MAX_VALUE){
+//                 return -1;
+//             }
+//             maxW=Math.max(maxW,dist[i]);
+//         }
+
+//         return maxW;
+        
+//     }
+// }
 
 
 
@@ -111,7 +192,7 @@ class Solution {
 //     }
 // }
 
-//Dijkstra approach
+// //Dijkstra approach
 
 // class Solution {
 //     public int networkDelayTime(int[][] times, int n, int k) {
