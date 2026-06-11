@@ -1,73 +1,148 @@
-//BFS approach
+//Attempt 1 : Not able to recall
 class Solution {
     public int findCheapestPrice(int n, int[][] flights, int src, int dst, int k) {
 
-        //adj list
-        List<List<int []>> adj=new ArrayList<>();
+        //What I can think is that I'll run Bellman ford and stop after k iterations
 
-        //Initialize this list
-        for(int i=0;i<n;i++){
-            adj.add(new ArrayList<>());
-        }
-
-        //Fill the adj list
-        for(int[] flight:flights){
-            int sr=flight[0];
-            int dt=flight[1];
-            int cost=flight[2];
-
-            adj.get(sr).add(new int[]{dt,cost});
-        }
+        //k+1 edges means k stops as we're not counting source and destination
         
-        
-        //Queue is needed to track the state
-        //[node,distance frm src node]
-        Queue<int []> bfs=new ArrayDeque<>();
+        //Loop through all the edges k+1 times , because I want to relax these k+1 times
 
-        bfs.offer(new int[]{src,0});
+        //The basic trick is that in one relaxation iteration ,I will check the array from the previous relaxation but will update the original array every time
 
-        //Track the minCost for a node
-        //It will store min cost for each node for k stops
-        int[] minCost=new int[n];
-        Arrays.fill(minCost,Integer.MAX_VALUE);
+        //Cost array to track the relaxed cost till the current step
+
+        Integer[] minCost=new Integer[n];
+
+        //I'm not setting src dist as 0 
         minCost[src]=0;
+        Integer[] copyCost=Arrays.copyOf(minCost,n);
+        boolean updated=false;
 
-        //Track levels for stops
-        int stopLevel=0;
+        for(int i=1;i<=k+1;i++){
 
-        //Continue till the level is k
-        while(!bfs.isEmpty() && stopLevel<=k){
-            //No of elm in this level
-            int levelSize=bfs.size();
 
-            for(int i=0;i<levelSize;i++){
-                 int[] currNodeState=bfs.poll();
-                 int node=currNodeState[0];
-                 int cost=currNodeState[1];
+            System.out.println("Relaxation level "+i);
+            for(int[] flight:flights){
 
-                 //Explore all the neighbours
-                 for(int[] neighbour:adj.get(node)){
-                    int nextNode=neighbour[0];
-                    int nextCost=neighbour[1];
-                    int newTotalCost=cost+nextCost;
-                    
-                    if(newTotalCost<minCost[nextNode]){
-                        minCost[nextNode]=newTotalCost;
-                        bfs.offer(new int[]{nextNode,newTotalCost});
+                int from=flight[0];
+                int to=flight[1];
+                int price=flight[2];
+
+                //If the from stop is reachable in the current level, I need to update it's to stop with the new lowest cost
+                // System.out.println("Min cost = "+Arrays.toString(minCost));
+
+                if(minCost[from]!=null /*&& minCost[to]>minCost[from]+price* Here minCost[to] can also be null */){
+
+                    // if(minCost[to]==null|| minCost[to]>minCost[from]+price){ If the same stop we're reaching in multiple ways in 1 step
+                    // if(copyCost[to]==null|| copyCost[to]>copyCost[from]+price){ We can add only to the minCost[from] as this shows 1 step
+                    if(copyCost[to]==null|| copyCost[to]>minCost[from]+price){
+                        //Updating only the next level
+                        copyCost[to]=minCost[from]+price;
+                        updated=true;
                     }
-                 }
+                    // System.out.println("Copy cost = "+Arrays.toString(copyCost));
+                }
+
+
+
             }
-            stopLevel++;
+            //At the end of this loop all the next level updated and now copy that to the minCost
+            //Optimisation 1
+            //In this level if no 
+            if(updated==true){
+                // minCost=copyCost; This way of copying is dangerous and will assign same reference variablet to both
+                minCost=Arrays.copyOf(copyCost,n);
+
+            }
+            else{
+                break;
+            }
         }
 
-        //At the end return 
-        if(minCost[dst]!=Integer.MAX_VALUE){
-            return minCost[dst];
+        //Now all the k+1 edges are relaxed
+        if(minCost[dst]==null){
+            return -1;
         }
-        return -1;        
-                
+
+
+        return minCost[dst];
+
+        
     }
 }
+
+
+// //BFS approach
+// class Solution {
+//     public int findCheapestPrice(int n, int[][] flights, int src, int dst, int k) {
+
+//         //adj list
+//         List<List<int []>> adj=new ArrayList<>();
+
+//         //Initialize this list
+//         for(int i=0;i<n;i++){
+//             adj.add(new ArrayList<>());
+//         }
+
+//         //Fill the adj list
+//         for(int[] flight:flights){
+//             int sr=flight[0];
+//             int dt=flight[1];
+//             int cost=flight[2];
+
+//             adj.get(sr).add(new int[]{dt,cost});
+//         }
+        
+        
+//         //Queue is needed to track the state
+//         //[node,distance frm src node]
+//         Queue<int []> bfs=new ArrayDeque<>();
+
+//         bfs.offer(new int[]{src,0});
+
+//         //Track the minCost for a node
+//         //It will store min cost for each node for k stops
+//         int[] minCost=new int[n];
+//         Arrays.fill(minCost,Integer.MAX_VALUE);
+//         minCost[src]=0;
+
+//         //Track levels for stops
+//         int stopLevel=0;
+
+//         //Continue till the level is k
+//         while(!bfs.isEmpty() && stopLevel<=k){
+//             //No of elm in this level
+//             int levelSize=bfs.size();
+
+//             for(int i=0;i<levelSize;i++){
+//                  int[] currNodeState=bfs.poll();
+//                  int node=currNodeState[0];
+//                  int cost=currNodeState[1];
+
+//                  //Explore all the neighbours
+//                  for(int[] neighbour:adj.get(node)){
+//                     int nextNode=neighbour[0];
+//                     int nextCost=neighbour[1];
+//                     int newTotalCost=cost+nextCost;
+                    
+//                     if(newTotalCost<minCost[nextNode]){
+//                         minCost[nextNode]=newTotalCost;
+//                         bfs.offer(new int[]{nextNode,newTotalCost});
+//                     }
+//                  }
+//             }
+//             stopLevel++;
+//         }
+
+//         //At the end return 
+//         if(minCost[dst]!=Integer.MAX_VALUE){
+//             return minCost[dst];
+//         }
+//         return -1;        
+                
+//     }
+// }
 
 
 // //Dijkstra Approach
