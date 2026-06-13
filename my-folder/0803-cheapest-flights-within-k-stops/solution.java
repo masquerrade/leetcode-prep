@@ -22,7 +22,7 @@ class Solution {
         for(int i=1;i<=k+1;i++){
 
 
-            System.out.println("Relaxation level "+i);
+            // System.out.println("Relaxation level "+i);
             for(int[] flight:flights){
 
                 int from=flight[0];
