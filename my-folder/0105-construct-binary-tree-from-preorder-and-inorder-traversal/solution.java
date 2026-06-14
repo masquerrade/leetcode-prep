@@ -26,17 +26,17 @@ class Solution {
     //Convert array to hashmap
     //Traditional approach
     Map<Integer,Integer> inorderMap=new HashMap<>();
-    // for(int i=0;i<inorder.length;i++){
-    //     inorderMap.put(inorder[i],i);
-    // }
+    for(int i=0;i<inorder.length;i++){
+        inorderMap.put(inorder[i],i);
+    }
 
     //Streams approach
-    inorderMap= IntStream.range(0,inorder.length)
-                .boxed()//Need to use this for making the map
-                .collect(Collectors.toMap(a-> inorder[a],
-                                          a->a,
-                                          (existingIndex,newIndex)->existingIndex
-                                        ));
+    // inorderMap= IntStream.range(0,inorder.length)
+    //             .boxed()//Need to use this for making the map
+    //             .collect(Collectors.toMap(a-> inorder[a],
+    //                                       a->a,
+    //                                       (existingIndex,newIndex)->existingIndex
+    //                                     ));
     
 
 
