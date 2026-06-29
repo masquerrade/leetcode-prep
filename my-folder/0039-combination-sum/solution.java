@@ -1,29 +1,16 @@
-//Using for loop
+//Without using loop
 class Solution {
     public List<List<Integer>> combinationSum(int[] candidates, int target) {
 
-        //What is the general steps I'm going to follow as I've solved this q so many times
-        //Remaining 
-        //Final array
-        //Only way here is to explore all the paths
-        //Start with the full 
-        //Ierate through the whole candidates array and fire off the combination one by one starting with each entry in the loop by removing the current entry after firing off
-        //In the loop variant I fire the current index as the starting for the candidates
-
-        //Final array I'll pass as a member variable
-
+        
         List<List<Integer>> finalList=new ArrayList<>();
-        //Can Use the sorted list for pruning
-        // Arrays.sort(candidates);
-        // System.out.println(Arrays.toString(candidates));
-        backTrack(candidates,0,target,new ArrayList<>(),finalList);
+        backTrack(candidates,target,0,new ArrayList<>(),finalList);
 
         return finalList;
-
         
     }
 
-    private void backTrack(int[] candidates ,int start, int remaining,List<Integer> currentList, List<List<Integer>> finalList){
+    private void backTrack(int[] candidates,int remaining,int start,List<Integer> currentList,List<List<Integer>> finalList){
 
         //Base case
         if(remaining==0){
@@ -31,29 +18,81 @@ class Solution {
             return;
         }
 
-        //Add sorting and move this check inside the loop
-        if(remaining<0){
+        if(remaining<0 || start>=candidates.length){
             return;
         }
 
+        currentList.add(candidates[start]);
+        //First call with the starting candidate
+        backTrack(candidates,remaining-candidates[start],start,currentList,finalList);
 
-        //Iterate all the candidate from start and fire the backtrack
-        for(int i=start;i<candidates.length;i++){
+        currentList.remove(currentList.size()-1);
 
-            //In case of using sorted list
-            // if(candidates[i]>remaining){
-            //     break;
-            // }
-
-            currentList.add(candidates[i]);
-            backTrack(candidates,i,remaining-candidates[i],currentList,finalList);
-
-            currentList.remove(currentList.size()-1);
-        }
-        
+        backTrack(candidates,remaining,start+1,currentList,finalList);
+ 
 
     }
+
+
 }
+
+
+// //Using for loop
+// class Solution {
+//     public List<List<Integer>> combinationSum(int[] candidates, int target) {
+
+//         //What is the general steps I'm going to follow as I've solved this q so many times
+//         //Remaining 
+//         //Final array
+//         //Only way here is to explore all the paths
+//         //Start with the full 
+//         //Ierate through the whole candidates array and fire off the combination one by one starting with each entry in the loop by removing the current entry after firing off
+//         //In the loop variant I fire the current index as the starting for the candidates
+
+//         //Final array I'll pass as a member variable
+
+//         List<List<Integer>> finalList=new ArrayList<>();
+//         //Can Use the sorted list for pruning
+//         // Arrays.sort(candidates);
+//         // System.out.println(Arrays.toString(candidates));
+//         backTrack(candidates,0,target,new ArrayList<>(),finalList);
+
+//         return finalList;
+
+        
+//     }
+
+//     private void backTrack(int[] candidates ,int start, int remaining,List<Integer> currentList, List<List<Integer>> finalList){
+
+//         //Base case
+//         if(remaining==0){
+//             finalList.add(new ArrayList<>(currentList));
+//             return;
+//         }
+
+//         //Add sorting and move this check inside the loop
+//         if(remaining<0){
+//             return;
+//         }
+
+
+//         //Iterate all the candidate from start and fire the backtrack
+//         for(int i=start;i<candidates.length;i++){
+
+//             //In case of using sorted list
+//             // if(candidates[i]>remaining){
+//             //     break;
+//             // }
+
+//             currentList.add(candidates[i]);
+//             backTrack(candidates,i,remaining-candidates[i],currentList,finalList);
+
+//             currentList.remove(currentList.size()-1);
+//         }
+        
+
+//     }
+// }
 
 // class Solution {
 //     public List<List<Integer>> combinationSum(int[] candidates, int target) {
