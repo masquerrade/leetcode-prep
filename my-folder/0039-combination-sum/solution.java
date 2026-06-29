@@ -13,7 +13,7 @@ class Solution {
         //Final array I'll pass as a member variable
 
         List<List<Integer>> finalList=new ArrayList<>();
-        //Use the sorted list
+        //Can Use the sorted list for pruning
         // Arrays.sort(candidates);
         // System.out.println(Arrays.toString(candidates));
         backTrack(candidates,0,target,new ArrayList<>(),finalList);
@@ -39,6 +39,8 @@ class Solution {
 
         //Iterate all the candidate from start and fire the backtrack
         for(int i=start;i<candidates.length;i++){
+
+            //In case of using sorted list
             // if(candidates[i]>remaining){
             //     break;
             // }
