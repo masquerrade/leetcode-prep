@@ -13,6 +13,9 @@ class Solution {
         //Final array I'll pass as a member variable
 
         List<List<Integer>> finalList=new ArrayList<>();
+        //Use the sorted list
+        Arrays.sort(candidates);
+        // System.out.println(Arrays.toString(candidates));
         backTrack(candidates,0,target,new ArrayList<>(),finalList);
 
         return finalList;
@@ -28,12 +31,18 @@ class Solution {
             return;
         }
 
-        if(remaining<0){
-            return;
-        }
+        //Add sorting and move this check inside the loop
+        // if(remaining<0){
+        //     return;
+        // }
+
 
         //Iterate all the candidate from start and fire the backtrack
         for(int i=start;i<candidates.length;i++){
+            if(candidates[i]>remaining){
+                break;
+            }
+
             currentList.add(candidates[i]);
             backTrack(candidates,i,remaining-candidates[i],currentList,finalList);
 
