@@ -19,7 +19,7 @@ class Solution {
 
         int subsetSum=(target+totalSum)/2;
 
-
+        //Subset sum should always be positive
         if((target+totalSum)%2!=0 || subsetSum<0){
             return 0;
         }
