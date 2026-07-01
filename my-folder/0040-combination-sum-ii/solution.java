@@ -1,50 +1,98 @@
+//Gemini solution
 class Solution {
     public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        List<List<Integer>> results = new ArrayList<>();
         
-        //Sort the candidates to remove duplicates
+        // Sorting is strictly required to easily skip duplicates and prune the search space.
         Arrays.sort(candidates);
-        //It's mandatory to initialize list before using it 
-        // List<List<Integer>> finalList;
-        List<List<Integer>> finalList=new ArrayList<>();
-
-        backtrack(candidates,target,0,new ArrayList<>(),finalList);
-
-        return finalList;
+        
+        backtrack(candidates, target, 0, new ArrayList<>(), results);
+        
+        return results;
     }
 
-    private void backtrack(int[] candidates,int remain,int startIndex,List<Integer> currentList,List<List<Integer>> finalList){
-        
-        if(remain==0){
-            finalList.add(new ArrayList<>(currentList));
+    private void backtrack(int[] candidates, int remain, int startIndex, 
+                           List<Integer> currentCombination, List<List<Integer>> results) {
+        // Base Case: We found a valid combination
+        if (remain == 0) {
+            // Deep copy the current combination before adding to results
+            results.add(new ArrayList<>(currentCombination));
             return;
         }
 
-        for(int i=startIndex; i<candidates.length; i++){
-            
-            //i>startIndex is there just to allow the first call in this level
-            if(i>startIndex && candidates[i]==candidates[i-1]){
+        for (int i = startIndex; i < candidates.length; i++) {
+            // Pruning step 1: Skip duplicates at the same depth of the recursion tree.
+            // If i > startIndex, we have already branched on this exact value at this level.
+            if (i > startIndex && candidates[i] == candidates[i - 1]) {
                 continue;
             }
 
-            //Now I got a new candidate . Check whether the new candidaate is greater than target and break
-            if(candidates[i]>remain){
+            // Pruning step 2: Early termination.
+            // Because the array is sorted, if the current element exceeds the remaining target,
+            // all subsequent elements will also exceed it.
+            if (candidates[i] > remain) {
                 break;
             }
 
-            //Add current candidate to the currentList
-            currentList.add(candidates[i]);
-
-            //Call backtrack
-            backtrack(candidates,remain-candidates[i],i+1,currentList,finalList);
-
-            currentList.remove(currentList.size()-1);
-
+            // Choose
+            currentCombination.add(candidates[i]);
+            
+            // Explore (Note: we pass i + 1 because we cannot reuse the exact same element)
+            backtrack(candidates, remain - candidates[i], i + 1, currentCombination, results);
+            
+            // Un-choose (Backtrack)
+            currentCombination.remove(currentCombination.size() - 1);
         }
-
-
-
     }
 }
+
+// class Solution {
+//     public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        
+//         //Sort the candidates to remove duplicates
+//         Arrays.sort(candidates);
+//         //It's mandatory to initialize list before using it 
+//         // List<List<Integer>> finalList;
+//         List<List<Integer>> finalList=new ArrayList<>();
+
+//         backtrack(candidates,target,0,new ArrayList<>(),finalList);
+
+//         return finalList;
+//     }
+
+//     private void backtrack(int[] candidates,int remain,int startIndex,List<Integer> currentList,List<List<Integer>> finalList){
+        
+//         if(remain==0){
+//             finalList.add(new ArrayList<>(currentList));
+//             return;
+//         }
+
+//         for(int i=startIndex; i<candidates.length; i++){
+            
+//             //i>startIndex is there just to allow the first call in this level
+//             if(i>startIndex && candidates[i]==candidates[i-1]){
+//                 continue;
+//             }
+
+//             //Now I got a new candidate . Check whether the new candidaate is greater than target and break
+//             if(candidates[i]>remain){
+//                 break;
+//             }
+
+//             //Add current candidate to the currentList
+//             currentList.add(candidates[i]);
+
+//             //Call backtrack
+//             backtrack(candidates,remain-candidates[i],i+1,currentList,finalList);
+
+//             currentList.remove(currentList.size()-1);
+
+//         }
+
+
+
+//     }
+// }
 
 
 // class Solution {
