@@ -1,4 +1,4 @@
-// // //Gemini solution
+// // // //Gemini solution
 // class Solution {
 //     public int combinationSum4(int[] nums, int target) {
 //         // Edge case: if nums is null or empty, no combinations can be formed
@@ -41,7 +41,8 @@ class Solution {
         //No of combination that add up to 0. IMp
         dp[0]=1;
 
-        for(int i=1;i<dp.length;i++){
+        // for(int i=1;i<=dp.length;i++){ This reduces speed
+        for(int i=1;i<=target;i++){
             System.out.println(Arrays.toString(dp));
             for(int num:nums){
                 dp[i]=(i>=num)?dp[i]+dp[i-num]:dp[i];// This is the trap. For this to work dp[0] should be initialised to 1
