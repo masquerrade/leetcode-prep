@@ -1,55 +1,55 @@
-//Gemini solution
-class Solution {
-    public int combinationSum4(int[] nums, int target) {
-        // Edge case: if nums is null or empty, no combinations can be formed
-        if (nums == null || nums.length == 0) {
-            return 0;
-        }
-
-        // dp[i] represents the number of combinations that sum up to i
-        int[] dp = new int[target + 1];
-
-        // Base case: 1 way to reach sum 0 (choose no elements)
-        dp[0] = 1;
-
-        // Build the DP table bottom-up
-        for (int currentSum = 1; currentSum <= target; currentSum++) {
-            for (int num : nums) {
-                // If the current number can be a part of the currentSum
-                if (currentSum - num >= 0) {
-                    dp[currentSum] += dp[currentSum - num];
-                }
-            }
-        }
-
-        return dp[target];
-    }
-}
-
-
-
+// //Gemini solution
 // class Solution {
 //     public int combinationSum4(int[] nums, int target) {
+//         // Edge case: if nums is null or empty, no combinations can be formed
+//         if (nums == null || nums.length == 0) {
+//             return 0;
+//         }
 
-//         //I can see the overlapping subproblems that I'm going to use 
-//         //I'll simply solve the subproblems
-//         int[] dp=new int[target+1];
-//         //No of combination that add up to 0. IMp
-//         dp[0]=1;
+//         // dp[i] represents the number of combinations that sum up to i
+//         int[] dp = new int[target + 1];
 
-//         for(int i=0;i<dp.length;i++){
-//             System.out.println(Arrays.toString(dp));
-//             for(int num:nums){
-//                 dp[i]=(i>=num)?dp[i]+dp[i-num]:dp[i];// This is the trap. For this to work dp[0] should be initialised to 1
+//         // Base case: 1 way to reach sum 0 (choose no elements)
+//         dp[0] = 1;
 
-
+//         // Build the DP table bottom-up
+//         for (int currentSum = 1; currentSum <= target; currentSum++) {
+//             for (int num : nums) {
+//                 // If the current number can be a part of the currentSum
+//                 if (currentSum - num >= 0) {
+//                     dp[currentSum] += dp[currentSum - num];
+//                 }
 //             }
 //         }
 
 //         return dp[target];
-        
 //     }
 // }
+
+
+
+class Solution {
+    public int combinationSum4(int[] nums, int target) {
+
+        //I can see the overlapping subproblems that I'm going to use 
+        //I'll simply solve the subproblems
+        int[] dp=new int[target+1];
+        //No of combination that add up to 0. IMp
+        dp[0]=1;
+
+        for(int i=0;i<dp.length;i++){
+            System.out.println(Arrays.toString(dp));
+            for(int num:nums){
+                dp[i]=(i>=num)?dp[i]+dp[i-num]:dp[i];// This is the trap. For this to work dp[0] should be initialised to 1
+
+
+            }
+        }
+
+        return dp[target];
+        
+    }
+}
 
 
 // class Solution {
