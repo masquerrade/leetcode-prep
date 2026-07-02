@@ -11,7 +11,7 @@ class Solution {
         for(int c:coins){
 
             for(int start=c;start<=amount;start++){
-                dp[start]=dp[start]+dp[start-c];
+                dp[start]+=dp[start-c];
             }
         }
 
