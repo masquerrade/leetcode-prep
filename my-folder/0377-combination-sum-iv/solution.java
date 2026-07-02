@@ -1,4 +1,4 @@
-// //Gemini solution
+// // //Gemini solution
 // class Solution {
 //     public int combinationSum4(int[] nums, int target) {
 //         // Edge case: if nums is null or empty, no combinations can be formed
@@ -31,13 +31,17 @@
 class Solution {
     public int combinationSum4(int[] nums, int target) {
 
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+
         //I can see the overlapping subproblems that I'm going to use 
         //I'll simply solve the subproblems
         int[] dp=new int[target+1];
         //No of combination that add up to 0. IMp
         dp[0]=1;
 
-        for(int i=0;i<dp.length;i++){
+        for(int i=1;i<dp.length;i++){
             System.out.println(Arrays.toString(dp));
             for(int num:nums){
                 dp[i]=(i>=num)?dp[i]+dp[i-num]:dp[i];// This is the trap. For this to work dp[0] should be initialised to 1
