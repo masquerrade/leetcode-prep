@@ -43,7 +43,6 @@ class Solution {
 
         // for(int i=1;i<=dp.length;i++){ This reduces speed
         for(int i=1;i<=target;i++){
-            System.out.println(Arrays.toString(dp));
             for(int num:nums){
                 dp[i]=(i>=num)?dp[i]+dp[i-num]:dp[i];// This is the trap. For this to work dp[0] should be initialised to 1
 
