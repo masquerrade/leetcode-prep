@@ -1,48 +1,87 @@
+//Gemini solution
+
 class Solution {
     public boolean wordBreak(String s, List<String> wordDict) {
-
-        //Since same word can be used multiple times in the squence it is a permutation or combination
-        //The words can be used multiple times in any order so it is unbound knapsack and will come in the inner loop
-
-
-        //First my stringbuilder will be empty
-
-        //I'm not sure whether this will be correct but I'll make a set of all the words made till now
-
-        Set<String> dp=new HashSet<>();
-
-        //Add empty string to the set
-        dp.add("");
-
-        for(int i=0;i<=s.length();i++){
-            String currentString=s.substring(0,i);
-
-            for(String word:wordDict){
-                if(currentString.endsWith(word)){
-                    
-                    //Finally I've figured out the trick .I need to find out if my current string ends with the current word , then check if the remaining string is present in the dp set
-                    int wordIndex=currentString.lastIndexOf(word);
-                    String subString=currentString.substring(0,wordIndex);
-                    if(dp.contains(subString)){
-                        dp.add(currentString);
-                    }
-
+        // Convert list to a HashSet for O(1) average time complexity lookups
+        Set<String> wordSet = new HashSet<>(wordDict);
+        
+        // Find the maximum word length in the dictionary for our optimization
+        int maxWordLength = 0;
+        for (String word : wordDict) {
+            maxWordLength = Math.max(maxWordLength, word.length());
+        }
+        
+        // dp[i] represents whether s.substring(0, i) can be segmented into dictionary words
+        boolean[] dp = new boolean[s.length() + 1];
+        
+        // Base case: an empty string is always theoretically segmentable 
+        dp[0] = true; 
+        
+        // Iterate through the string to build our DP array
+        for (int i = 1; i <= s.length(); i++) {
+            // Check previous substrings, but limit the look-back to the max word length
+            // This prevents the inner loop from running N times unnecessarily
+            for (int j = i - 1; j >= Math.max(0, i - maxWordLength); j--) {
+                
+                // If the string up to 'j' is valid AND the substring from 'j' to 'i' is in the dictionary
+                if (dp[j] && wordSet.contains(s.substring(j, i))) {
+                    dp[i] = true;
+                    break; // Move to the next 'i' since we found a valid segmentation for this prefix
                 }
             }
-
         }
-
-        System.out.println(dp);
-
-        if(dp.contains(s)){
-            return true;
-        }
-
-        return false;
-
         
+        // The last element contains the boolean result for the entire string
+        return dp[s.length()];
     }
 }
+
+
+// class Solution {
+//     public boolean wordBreak(String s, List<String> wordDict) {
+
+//         //Since same word can be used multiple times in the squence it is a permutation or combination
+//         //The words can be used multiple times in any order so it is unbound knapsack and will come in the inner loop
+
+
+//         //First my stringbuilder will be empty
+
+//         //I'm not sure whether this will be correct but I'll make a set of all the words made till now
+
+//         Set<String> dp=new HashSet<>();
+
+//         //Add empty string to the set
+//         dp.add("");
+
+//         for(int i=0;i<=s.length();i++){
+//             String currentString=s.substring(0,i);
+
+//             for(String word:wordDict){
+//                 if(currentString.endsWith(word)){
+                    
+//                     //Finally I've figured out the trick .I need to find out if my current string ends with the current word , then check if the remaining string is present in the dp set
+//                     int wordIndex=currentString.lastIndexOf(word);
+//                     String subString=currentString.substring(0,wordIndex);
+//                     if(dp.contains(subString)){
+//                         dp.add(currentString);
+//                     }
+
+//                 }
+//             }
+
+//         }
+
+//         System.out.println(dp);
+
+//         if(dp.contains(s)){
+//             return true;
+//         }
+
+//         return false;
+
+        
+//     }
+// }
 
 
 // class Solution {
