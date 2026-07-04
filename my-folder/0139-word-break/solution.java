@@ -1,3 +1,56 @@
+class Solution {
+    public boolean wordBreak(String s, List<String> wordDict) {
+        
+        //Two optimisation
+        //Instead of adding the word in the set , I can use a boolean array to track the subword till now 
+        //Instead of interating through all the words in the dictionary to check if the prefix till now is valid ,I take out max max word length from my wordDict and then for each substring look from the end to the max word length to check if the substring is valid
+
+        //Convert list to set for fast lookup
+        Set<String> wordSet =new HashSet<>(wordDict);
+
+        //Boolean array to track which all sustrings are vaLid
+        boolean[] dp=new boolean[s.length()+1];
+
+        //Empty string can always be formed
+        dp[0]=true;
+
+        //Need to find max word length 
+        int maxLen=0,limit=0;
+        for(String word:wordDict){
+            maxLen=Math.max(maxLen,word.length());
+        }
+        
+        for(int i=1;i<=s.length();i++){
+
+            if(i>maxLen){
+                limit=i-maxLen;
+                //2
+                //1 ->0
+                //2 ->0
+                //2 ->
+            }
+            else{
+                limit=0;
+            }
+
+            for(int j=i-1;j>=limit;j--){
+                //0->1 1st letter from the word (0,1) dp[j]==true
+                //(j,i) (1,2) && dp[j]  ; (0,2)&&dp[0]
+                //i=3
+                //limit=1
+                //(2,3)&& dp[2]; (1,3)&&dp[1]
+
+                if(wordSet.contains(s.substring(j,i)) && dp[j]){
+                    dp[i]=true;
+                    break;
+                }
+            }
+        }
+
+        return dp[s.length()];
+    }
+}
+
 // //Gemini solution
 
 // class Solution {
@@ -36,43 +89,44 @@
 //     }
 // }
 
-
-class Solution {
-    public boolean wordBreak(String s, List<String> wordDict) {
-        // Instead of a Set of Strings, we use a boolean array of size N + 1.
-        // dp[i] being true means the prefix of length 'i' is valid.
-        boolean[] dp = new boolean[s.length() + 1];
+//Gemini optimised solution
+// class Solution {
+//     public boolean wordBreak(String s, List<String> wordDict) {
+//         // Instead of a Set of Strings, we use a boolean array of size N + 1.
+//         // dp[i] being true means the prefix of length 'i' is valid.
+//         boolean[] dp = new boolean[s.length() + 1];
         
-        // Base case: equivalent to dp.add("")
-        dp[0] = true; 
+//         // Base case: equivalent to dp.add("")
+//         dp[0] = true; 
         
-        for (int i = 1; i <= s.length(); i++) {
-            // We can still look at the current prefix conceptually, but no need to 
-            // constantly substring it in the inner loop.
+//         for (int i = 1; i <= s.length(); i++) {
+//             // We can still look at the current prefix conceptually, but no need to 
+//             // constantly substring it in the inner loop.
             
-            for (String word : wordDict) {
-                // To avoid string slicing, we just check lengths and characters
-                int wordLen = word.length();
+//             for (String word : wordDict) {
+//                 // To avoid string slicing, we just check lengths and characters
+//                 int wordLen = word.length();
                 
-                // 1. Is the current prefix long enough to even contain this word?
-                // 2. Does the prefix end with this word?
-                // 3. Was the string VALID right before this word started? (equivalent to dp.contains(subString))
-                if (i >= wordLen) {
-                    // Calculate where the substring would have started
-                    int previousIndex = i - wordLen;
+//                 // 1. Is the current prefix long enough to even contain this word?
+//                 // 2. Does the prefix end with this word?
+//                 // 3. Was the string VALID right before this word started? (equivalent to dp.contains(subString))
+//                 if (i >= wordLen) {
+//                     // Calculate where the substring would have started
+//                     int previousIndex = i - wordLen;
                     
-                    if (dp[previousIndex] && s.substring(previousIndex, i).equals(word)) {
-                        dp[i] = true;
-                        break; // We found a valid breakdown for this prefix, skip other words
-                    }
-                }
-            }
-        }
+//                     if (dp[previousIndex] && s.substring(previousIndex, i).equals(word)) {
+//                         dp[i] = true;
+//                         break; // We found a valid breakdown for this prefix ending at the index i, skip other words
+//                         //Since this has already been marked as true , we don't care if any other words can also form this prefix
+//                     }
+//                 }
+//             }
+//         }
         
-        // equivalent to dp.contains(s)
-        return dp[s.length()]; 
-    }
-}
+//         // equivalent to dp.contains(s)
+//         return dp[s.length()]; 
+//     }
+// }
 
 
 // class Solution {
