@@ -1,5 +1,17 @@
 class Solution {
     public int maxProfit(int k, int[] prices) {
+
+        if(k<1||prices==null||prices.length==0){
+            return 0;
+        }
+
+
+        //If n days there can be at max n/2 transactions as we need to buy on one day and sell on the other day
+        //If max allowed transaction is more than n/2 then we don't need to track the states as in that case we can buy just before the day price increases and the sell on the day price increased
+
+        if(k>prices.length/2){
+            return maxProfitUnlimited(prices);
+        }
         
         //Since the profit of the current day depends on the max profit till yesterday or the last transaction we don't need 2 D array tp track the state
 
@@ -27,6 +39,19 @@ class Solution {
 
         return sell[k];
 
+    }
+
+    private int maxProfitUnlimited(int[] prices){
+
+        int maxProfit=0;
+
+        for(int i=1;i<prices.length;i++){
+            if(prices[i]>prices[i-1]){
+                maxProfit+=prices[i]-prices[i-1];
+            }
+        }
+
+        return maxProfit;
     }
 }
 
