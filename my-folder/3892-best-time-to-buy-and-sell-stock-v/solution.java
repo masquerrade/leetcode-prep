@@ -2,6 +2,10 @@
 class Solution {
     public long maximumProfit(int[] prices, int k) {
 
+        if(prices==null||prices.length==0){
+            return 0;
+        }
+
         //I need to take short sell also in consideration to maintain the profit
         //B -> S
 
