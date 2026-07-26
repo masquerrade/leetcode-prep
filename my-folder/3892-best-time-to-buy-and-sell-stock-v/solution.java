@@ -1,79 +1,163 @@
-//Gemini forward traversal
+//Backward traversal method
 class Solution {
     public long maximumProfit(int[] prices, int k) {
-        // Base case: if there are no prices, we can't make any profit
-        if (prices == null || prices.length == 0) {
+        
+        //2D array to track the the futurre profit for each day
+        if(prices==null || prices.length==0){
             return 0;
         }
 
-        // Initialize our 1D previous state arrays
-        long[] prevEmpty = new long[k + 1];
-        long[] prevLong = new long[k + 1];
-        long[] prevShort = new long[k + 1];
+        //Array which stores future profit 
+        // int[][] dp=new int[k+1][3]; Profit can exceed integer limit
+        long [][] dp=new long[k+1][3];
 
-        // Fill with a deeply negative value to represent impossible states
-        Arrays.fill(prevEmpty, Integer.MIN_VALUE);
-        Arrays.fill(prevLong, Integer.MIN_VALUE);
-        Arrays.fill(prevShort, Integer.MIN_VALUE);
+        //Current scratchpad which becomes the future profit array
+        long[][] nextDp=new long[k+1][3];
 
-        // Day 0 valid starting states
-        prevEmpty[0] = 0;
-        prevLong[0] = -prices[0];
-        prevShort[0] = prices[0];
+        int n=prices.length;
 
-        // Outer loop: iterate through each day
-        for (int i = 1; i < prices.length; i++) {
-            // Temporary arrays for the current day's calculations
-            long[] currEmpty = new long[k + 1];
-            long[] currLong = new long[k + 1];
-            long[] currShort = new long[k + 1];
+        //Let's initialize the backward dp array for imaginary day n
+        for(int i=0;i<=k;i++){
+            //THis means on a future n+1th day when the markets closed we can't make any more profit
+            dp[i][0]=0;
+            dp[i][1]=Integer.MIN_VALUE;
+            dp[i][2]=Integer.MIN_VALUE;
+        }
 
-            Arrays.fill(currEmpty, Integer.MIN_VALUE);
-            Arrays.fill(currLong, Integer.MIN_VALUE);
-            Arrays.fill(currShort, Integer.MIN_VALUE); 
+        //Now I need to traverse backward and keep adding profit for each day by increasing the number of transactions left
 
-            // Inner loop: iterate through all possible transaction counts
-            for (int j = 0; j <= k; j++) {
-                
-                // --- PATH A: Stays on the same transaction count (j) ---
-                // 1. "Do nothing" (carry over yesterday's state)
-                currEmpty[j] = prevEmpty[j];
-                currLong[j] = prevLong[j];
-                currShort[j] = prevShort[j];
+        for(int i=n-1; i>=0; i--){
 
-                // 2. "Open a position" (Empty -> Long or Short)
-                if (prevEmpty[j] != Integer.MIN_VALUE) {
-                    currLong[j] = Math.max(currLong[j], prevEmpty[j] - prices[i]);
-                    currShort[j] = Math.max(currShort[j], prevEmpty[j] + prices[i]);
+            //Do I need to iterate through all the transactions for each day
+            //Yes absolutely
+            for(int j=0; j<=k; j++){
+                //On n-1 day I've to iterate through what if 0 transactions remaining to all k transactions remaining
+
+                //What I need to calculate is nextDp[j] for each state
+
+                //Today I'm in neutral state so what could have been my maximum profit using profit from all states from tomorrow
+                //I can open long from today
+                long openLong=dp[j][1]-prices[i];
+                long openShort=dp[j][2]+prices[i];
+                long stayNeutral=dp[j][0];
+                //So I'm deciding the max profit I can make by being in neutral state today by using all the states I can be tomorrow and choosing the max out of them
+                nextDp[j][0]=Math.max(Math.max(openLong,openShort),stayNeutral);
+
+                //Today I want to be in long state
+                //Then for tomorrow either I can close the long state or stay on the long state for tomorrow also
+                //A trade can be closed only when j>0 , when j==0, I need to make it to a minimum  value
+                long closeLong=Integer.MIN_VALUE;
+                if(j>0){
+                    closeLong=dp[j-1][0]+prices[i];
                 }
+                long holdLong=dp[j][1];
+                nextDp[j][1]=Math.max(closeLong,holdLong);
 
-                // --- PATH B: Completes a transaction (requires j > 0) ---
-                if (j > 0) {
-                    // "Close a position" (Long/Short -> Empty)
-                    if (prevLong[j - 1] != Integer.MIN_VALUE) {
-                        currEmpty[j] = Math.max(currEmpty[j], prevLong[j - 1] + prices[i]);
-                    }
-                    if (prevShort[j - 1] != Integer.MIN_VALUE) {
-                        currEmpty[j] = Math.max(currEmpty[j], prevShort[j - 1] - prices[i]);
-                    }
+                //Today I want to be in short state
+                //Then for tomorrow I can either hold the short state or close the short state
+                long closeShort=Integer.MIN_VALUE;
+                if(j>0){
+                    closeShort=dp[j-1][0]-prices[i];
                 }
+                long holdShort=dp[j][2];
+                nextDp[j][2]=Math.max(closeShort,holdShort);
+
+
             }
+            //For the next iteration I need to assign nextDP to dp
+            //I want to copy the value of nextDp to dp and not make both of them same
+            //Instead of copying each value I can simply swap them in each iteration so that they can keep pointing to the different arrays
 
-            // Move current day's data to previous for tomorrow's loop
-            prevEmpty = currEmpty;
-            prevLong = currLong;
-            prevShort = currShort;
+            long[][] temp=dp;
+            dp=nextDp;
+            nextDp=temp;
+
         }
 
-        // Find the absolute maximum profit among all possible transaction counts
-        long maxProfit = prevEmpty[0];
-        for (long profit : prevEmpty) {
-            maxProfit = Math.max(maxProfit, profit);
-        }
+        //Now I want to return the dp entry where profit for the closed state is stored which stores the max future profit when we can make k transactions
 
-        return maxProfit;
+        return dp[k][0];
+
     }
 }
+
+
+// //Gemini forward traversal
+// class Solution {
+//     public long maximumProfit(int[] prices, int k) {
+//         // Base case: if there are no prices, we can't make any profit
+//         if (prices == null || prices.length == 0) {
+//             return 0;
+//         }
+
+//         // Initialize our 1D previous state arrays
+//         long[] prevEmpty = new long[k + 1];
+//         long[] prevLong = new long[k + 1];
+//         long[] prevShort = new long[k + 1];
+
+//         // Fill with a deeply negative value to represent impossible states
+//         Arrays.fill(prevEmpty, Integer.MIN_VALUE);
+//         Arrays.fill(prevLong, Integer.MIN_VALUE);
+//         Arrays.fill(prevShort, Integer.MIN_VALUE);
+
+//         // Day 0 valid starting states
+//         prevEmpty[0] = 0;
+//         prevLong[0] = -prices[0];
+//         prevShort[0] = prices[0];
+
+//         // Outer loop: iterate through each day
+//         for (int i = 1; i < prices.length; i++) {
+//             // Temporary arrays for the current day's calculations
+//             long[] currEmpty = new long[k + 1];
+//             long[] currLong = new long[k + 1];
+//             long[] currShort = new long[k + 1];
+
+//             Arrays.fill(currEmpty, Integer.MIN_VALUE);
+//             Arrays.fill(currLong, Integer.MIN_VALUE);
+//             Arrays.fill(currShort, Integer.MIN_VALUE); 
+
+//             // Inner loop: iterate through all possible transaction counts
+//             for (int j = 0; j <= k; j++) {
+                
+//                 // --- PATH A: Stays on the same transaction count (j) ---
+//                 // 1. "Do nothing" (carry over yesterday's state)
+//                 currEmpty[j] = prevEmpty[j];
+//                 currLong[j] = prevLong[j];
+//                 currShort[j] = prevShort[j];
+
+//                 // 2. "Open a position" (Empty -> Long or Short)
+//                 if (prevEmpty[j] != Integer.MIN_VALUE) {
+//                     currLong[j] = Math.max(currLong[j], prevEmpty[j] - prices[i]);
+//                     currShort[j] = Math.max(currShort[j], prevEmpty[j] + prices[i]);
+//                 }
+
+//                 // --- PATH B: Completes a transaction (requires j > 0) ---
+//                 if (j > 0) {
+//                     // "Close a position" (Long/Short -> Empty)
+//                     if (prevLong[j - 1] != Integer.MIN_VALUE) {
+//                         currEmpty[j] = Math.max(currEmpty[j], prevLong[j - 1] + prices[i]);
+//                     }
+//                     if (prevShort[j - 1] != Integer.MIN_VALUE) {
+//                         currEmpty[j] = Math.max(currEmpty[j], prevShort[j - 1] - prices[i]);
+//                     }
+//                 }
+//             }
+
+//             // Move current day's data to previous for tomorrow's loop
+//             prevEmpty = currEmpty;
+//             prevLong = currLong;
+//             prevShort = currShort;
+//         }
+
+//         // Find the absolute maximum profit among all possible transaction counts
+//         long maxProfit = prevEmpty[0];
+//         for (long profit : prevEmpty) {
+//             maxProfit = Math.max(maxProfit, profit);
+//         }
+
+//         return maxProfit;
+//     }
+// }
 
 
 // class Solution {
