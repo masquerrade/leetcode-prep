@@ -1,3 +1,4 @@
+//Attempt 1: 8:53
 class Solution {
     public int findMin(int[] nums) {
 
