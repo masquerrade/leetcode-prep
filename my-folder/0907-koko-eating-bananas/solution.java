@@ -66,7 +66,7 @@ class Solution {
         //Iterate through all the piles
         //At by speed add up the time taken to finish the full piles
         //Return true if total number of hrs <= h
-        long totalHrs=0;
+        int totalHrs=0;
         for(long pile:piles){
             totalHrs+=(pile-1)/k+1;
         }
