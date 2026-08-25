@@ -8,43 +8,54 @@
  *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
- //Iterative
+//  //Iterative
+// class Solution {
+//     public ListNode reverseList(ListNode head) {
+//         if(head==null || head.next==null){
+//             return head;
+//         }
+
+//         //Three pointer solution iterative soln
+//         ListNode currNode=head; // This will hold the unreversed section
+//         ListNode prevNode=null; // This will hold the reversed section
+        
+//         while(currNode != null){
+//             //This will store the connections of the current node
+//             ListNode nextNode=currNode.next;
+
+//             //Reverse the pointer
+//             currNode.next=prevNode;
+
+//             //Update the states
+//             prevNode=currNode; //New reversed head
+//             currNode=nextNode; //Unreversed head
+//         }
+
+//         return prevNode;
+//     }
+// }
+
+//Recursive
 class Solution {
     public ListNode reverseList(ListNode head) {
         if(head==null || head.next==null){
             return head;
         }
 
-        //Three pointer solution iterative soln
-        ListNode currNode=head; // This will hold the unreversed section
-        ListNode prevNode=null; // This will hold the reversed section
-        
-        while(currNode != null){
-            //This will store the connections of the current node
-            ListNode nextNode=currNode.next;
+        //Assign the remaining work to recursion
+        //Here I'll get head of the reversed list that means tail of the current list
+        ListNode reverseHead=reverseList(head.next);
 
-            //Reverse the pointer
-            currNode.next=prevNode;
+        //Now I need to do my remaining work
+        //Reverse the current head
+        head.next.next=head;
 
-            //Update the states
-            prevNode=currNode; //New reversed head
-            currNode=nextNode; //Unreversed head
-        }
+        //Break the cycle
+        head.next=null;
 
-        return prevNode;
+        return reverseHead;
     }
 }
-
-// //Recursive
-// class Solution {
-//     public ListNode reverseList(ListNode head) {
-//         if(head==null || head.next==nll){
-//             return head;
-//         }
-
-        
-//     }
-// }
 
 
 // class Solution {
