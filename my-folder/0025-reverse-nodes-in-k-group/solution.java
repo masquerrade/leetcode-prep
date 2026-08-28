@@ -8,6 +8,7 @@
  *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
+ //First arrempt without any help and dry run : 90 min
 class Solution {
     public ListNode reverseKGroup(ListNode head, int k) {
 
