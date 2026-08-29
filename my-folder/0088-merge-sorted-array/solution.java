@@ -1,3 +1,4 @@
+//First attempt with dry run 5:46 min
 class Solution {
     public void merge(int[] nums1, int m, int[] nums2, int n) {
 
