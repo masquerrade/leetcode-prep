@@ -9,7 +9,7 @@ class Solution {
         
         //Pretty good question
         //If array is null return empty list \
-        if(nums==null || nums.length==0){
+        if(nums==null ){
            return  Collections.emptyList();
         }
 
@@ -31,14 +31,14 @@ class Solution {
         //I need to pass by reference the curent list and the final list to the backtrack function.
         //Since I need to avoid duplicates and look strictly forward I'll pass the start Index
 
-        backtrack(nums,0,currentSubset,subsetList);
+        backtrackDecisionTree(nums,0,currentSubset,subsetList);
 
         return subsetList;
 
 
     }
 
-    private void backtrack(int[] nums,int startIndex,List<Integer> currentSubset,List<List<Integer>> subsetList){
+    private void backtrackDecisionTree(int[] nums,int startIndex,List<Integer> currentSubset,List<List<Integer>> subsetList){
 
         //What would be my base case
         if(nums.length<=startIndex){
@@ -55,12 +55,12 @@ class Solution {
 
         currentSubset.add(nums[startIndex]);
         // I chose the current element and moved forward 
-        backtrack(nums,startIndex+1,currentSubset,subsetList);
+        backtrackDecisionTree(nums,startIndex+1,currentSubset,subsetList);
 
         //currentSubset.remove(nums[startIndex]); To avoid ambiguity whther to remove by value or index remove the last most element
         //Now I've to unchoose the current element and move forward
         currentSubset.remove(currentSubset.size()-1);
-        backtrack(nums,startIndex+1,currentSubset,subsetList);
+        backtrackDecisionTree(nums,startIndex+1,currentSubset,subsetList);
 
     }
 
