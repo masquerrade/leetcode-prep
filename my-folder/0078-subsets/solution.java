@@ -31,7 +31,8 @@ class Solution {
         //I need to pass by reference the curent list and the final list to the backtrack function.
         //Since I need to avoid duplicates and look strictly forward I'll pass the start Index
 
-        backtrackDecisionTree(nums,0,currentSubset,subsetList);
+        // backtrackDecisionTree(nums,0,currentSubset,subsetList);
+        backtrackLoopDfs(nums,0,currentSubset,subsetList);
 
         return subsetList;
 
@@ -62,6 +63,25 @@ class Solution {
         currentSubset.remove(currentSubset.size()-1);
         backtrackDecisionTree(nums,startIndex+1,currentSubset,subsetList);
 
+    }
+
+    //Backtrack loop dfs
+    private void backtrackLoopDfs(int[] nums,int startIndex,List<Integer> currentSubset,List<List<Integer>> subsetList){
+
+        //Add the current valid prefix to the list
+        subsetList.add(new ArrayList<>(currentSubset));
+
+        //Now go on making all the possible combinations with the current prefix in the dfs way
+
+        for(int i=startIndex;i<nums.length;i++){
+
+            currentSubset.add(nums[i]);
+            //Major issue here. I need to call backtrack with i+1 and not start+1
+            // backtrackLoopDfs(nums,startIndex+1,currentSubset,subsetList);
+             backtrackLoopDfs(nums,i+1,currentSubset,subsetList);
+            currentSubset.remove(currentSubset.size()-1);
+            
+        }
     }
 
 }
