@@ -1,40 +1,78 @@
-//Without using loop
 class Solution {
     public List<List<Integer>> combinationSum(int[] candidates, int target) {
 
-        
-        List<List<Integer>> finalList=new ArrayList<>();
-        backTrack(candidates,target,0,new ArrayList<>(),finalList);
+        if(candidates==null || candidates.length==0){
+            return Collections.emptyList();
+        }
 
-        return finalList;
-        
+        List<List<Integer>> result=new ArrayList<>();
+        List<Integer> currentList=new ArrayList<>();
+
+        backtrack(candidates, 0, currentList, target, result);
+
+        return result;        
     }
 
-    private void backTrack(int[] candidates,int remaining,int start,List<Integer> currentList,List<List<Integer>> finalList){
+    private void backtrack(int[] candidates,int start, List<Integer> currentList,int target, List<List<Integer>> result){
 
-        //Base case
-        if(remaining==0){
-            finalList.add(new ArrayList<>(currentList));
+        if(target<0){
             return;
         }
 
-        if(remaining<0 || start>=candidates.length){
+        if(target==0){
+            result.add(new ArrayList<>(currentList));
             return;
         }
 
-        currentList.add(candidates[start]);
-        //First call with the starting candidate
-        backTrack(candidates,remaining-candidates[start],start,currentList,finalList);
+        //Each candidates can be used as many times as needed so I need to track the index also
+        for(int i=start; i<candidates.length; i++){
+            currentList.add(candidates[i]);
 
-        currentList.remove(currentList.size()-1);
+            backtrack(candidates, i, currentList, target-candidates[i], result);
 
-        backTrack(candidates,remaining,start+1,currentList,finalList);
+            currentList.remove(currentList.size()-1);
+
+        }
+    }
+}
+
+//Without using loop
+// class Solution {
+//     public List<List<Integer>> combinationSum(int[] candidates, int target) {
+
+        
+//         List<List<Integer>> finalList=new ArrayList<>();
+//         backTrack(candidates,target,0,new ArrayList<>(),finalList);
+
+//         return finalList;
+        
+//     }
+
+//     private void backTrack(int[] candidates,int remaining,int start,List<Integer> currentList,List<List<Integer>> finalList){
+
+//         //Base case
+//         if(remaining==0){
+//             finalList.add(new ArrayList<>(currentList));
+//             return;
+//         }
+
+//         if(remaining<0 || start>=candidates.length){
+//             return;
+//         }
+
+//         currentList.add(candidates[start]);
+//         //First call with the starting candidate
+//         backTrack(candidates,remaining-candidates[start],start,currentList,finalList);
+
+//         currentList.remove(currentList.size()-1);
+
+//         backTrack(candidates,remaining,start+1,currentList,finalList);
  
 
-    }
+//     }
 
 
-}
+// }
 
 
 // //Using for loop
