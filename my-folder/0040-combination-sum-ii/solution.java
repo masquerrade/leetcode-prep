@@ -5,6 +5,7 @@ class Solution {
         }
 
         int[] copyCan=candidates.clone();
+        //Here sorting is not optional
         Arrays.sort(copyCan);
         List<List<Integer>> result= new ArrayList<>();
         backTrack(copyCan,0,target,new ArrayList<>(),result);
