@@ -9,7 +9,12 @@ class Solution {
         List<List<Integer>> result=new ArrayList<>();
         List<Integer> currentList=new ArrayList<>();
 
-        backtrack(candidates, 0, currentList, target, result);
+        //Shallow copy to preserve the input
+        int[] copyCan=candidates.clone();
+        //Sorting to exit early when candidate>target
+        Arrays.sort(copyCan);
+
+        backtrack(copyCan, 0, currentList, target, result);
 
         return result;        
     }
