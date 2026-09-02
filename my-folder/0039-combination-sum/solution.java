@@ -1,43 +1,133 @@
-//Revision 1 : 15 min
-class Solution {
-    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+// //Revision 1 : 15 min
+// class Solution {
+//     public List<List<Integer>> combinationSum(int[] candidates, int target) {
 
-        if(candidates==null || candidates.length==0){
+//         if(candidates==null || candidates.length==0){
+//             return Collections.emptyList();
+//         }
+
+//         List<List<Integer>> result=new ArrayList<>();
+//         List<Integer> currentList=new ArrayList<>();
+
+//         // //Shallow copy to preserve the input
+//         // int[] copyCan=candidates.clone();
+//         // //Sorting to exit early when candidate>target
+//         // Arrays.sort(copyCan);
+
+//         backtrack(copyCan, 0, currentList, target, result);
+
+//         return result;        
+//     }
+
+//     private void backtrack(int[] candidates,int start, List<Integer> currentList,int target, List<List<Integer>> result){
+
+//         if(target<0){
+//             return;
+//         }
+
+//         if(target==0){
+//             result.add(new ArrayList<>(currentList));
+//             return;
+//         }
+
+//         //Each candidates can be used as many times as needed so I need to track the index also
+//         for(int i=start; i<candidates.length; i++){
+//             currentList.add(candidates[i]);
+
+//             backtrack(candidates, i, currentList, target-candidates[i], result);
+
+//             currentList.remove(currentList.size()-1);
+
+//         }
+//     }
+// }
+
+/**
+ * Thread-safe, production-grade solver for LeetCode 39: Combination Sum.
+ * Gemini solution
+ */
+class Solution {
+
+    /**
+     * Computes all unique combinations in {@code candidates} where the candidate numbers
+     * sum to {@code target}.
+     *
+     * @param candidates array of distinct positive integers
+     * @param target     positive integer target sum
+     * @return list of all unique combinations summing to target
+     * @throws IllegalArgumentException if candidates is null or contains non-positive elements
+     */
+    public List<List<Integer>> combinationSum(final int[] candidates, final int target) {
+        // Defensive Input Validation
+        if (candidates == null) {
+            throw new IllegalArgumentException("Candidates array must not be null.");
+        }
+        if (target <= 0) {
+            return Collections.emptyList();
+        }
+        if (candidates.length == 0) {
             return Collections.emptyList();
         }
 
-        List<List<Integer>> result=new ArrayList<>();
-        List<Integer> currentList=new ArrayList<>();
+        // Validate positive constraint to guarantee forward progress and prevent infinite cycles
+        for (int candidate : candidates) {
+            if (candidate <= 0) {
+                throw new IllegalArgumentException("All candidates must be strictly positive integers: " + candidate);
+            }
+        }
 
-        //Shallow copy to preserve the input
-        int[] copyCan=candidates.clone();
-        //Sorting to exit early when candidate>target
-        Arrays.sort(copyCan);
+        // Clone to preserve caller input immutability; sort to enable O(1) branch pruning
+        final int[] sortedCandidates = candidates.clone();
+        Arrays.sort(sortedCandidates);
 
-        backtrack(copyCan, 0, currentList, target, result);
+        final List<List<Integer>> results = new ArrayList<>();
+        final List<Integer> currentPath = new ArrayList<>();
 
-        return result;        
+        backtrack(sortedCandidates, target, 0, currentPath, results);
+
+        return results;
     }
 
-    private void backtrack(int[] candidates,int start, List<Integer> currentList,int target, List<List<Integer>> result){
+    /**
+     * Depth-First Search with backtracking to explore valid combinations.
+     *
+     * @param candidates       sorted array of available candidates
+     * @param remainingTarget  remaining sum required to hit original target
+     * @param startIndex       monotonically non-decreasing index to avoid duplicate combinations
+     * @param currentPath      active exploration path (mutable state)
+     * @param results          collector for valid candidate combinations
+     */
+    private void backtrack(
+            final int[] candidates,
+            final int remainingTarget,
+            final int startIndex,
+            final List<Integer> currentPath,
+            final List<List<Integer>> results) {
 
-        if(target<0){
+        // Base case: Exact match hit
+        if (remainingTarget == 0) {
+            results.add(new ArrayList<>(currentPath)); // Snapshot path
             return;
         }
 
-        if(target==0){
-            result.add(new ArrayList<>(currentList));
-            return;
-        }
+        // Iterate through candidates starting from startIndex to enforce canonical ordering
+        for (int i = startIndex; i < candidates.length; i++) {
+            final int candidate = candidates[i];
 
-        //Each candidates can be used as many times as needed so I need to track the index also
-        for(int i=start; i<candidates.length; i++){
-            currentList.add(candidates[i]);
+            // Pruning Invariant: Because candidates are sorted, if the current element exceeds
+            // remainingTarget, all subsequent candidates will also exceed it.
+            if (candidate > remainingTarget) {
+                break;
+            }
 
-            backtrack(candidates, i, currentList, target-candidates[i], result);
+            // State Transition: Choose
+            currentPath.add(candidate);
 
-            currentList.remove(currentList.size()-1);
+            // Recurse: Maintain 'i' as startIndex since unlimited reuse of candidate is permitted
+            backtrack(candidates, remainingTarget - candidate, i, currentPath, results);
 
+            // State Transition: Backtrack (revert state)
+            currentPath.remove(currentPath.size() - 1);
         }
     }
 }
