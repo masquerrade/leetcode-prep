@@ -1,30 +1,83 @@
-// // // //Gemini solution
+
+//2hrs thinking
 class Solution {
     public int combinationSum4(int[] nums, int target) {
-        // Edge case: if nums is null or empty, no combinations can be formed
-        if (nums == null || nums.length == 0) {
+        
+
+        //Outer loop will be the dp array
+        //Inner loop will be the nums as it can be used multiple times for different subtargets 
+        //TC-O(T*N)
+
+        if(nums==null || nums.length==0){
             return 0;
         }
 
-        // dp[i] represents the number of combinations that sum up to i
-        int[] dp = new int[target + 1];
+        if(target==0){
+            return 1;
+        }
 
-        // Base case: 1 way to reach sum 0 (choose no elements)
-        dp[0] = 1;
+        //All the elements in nums should be positive and target also positive
 
-        // Build the DP table bottom-up
-        for (int currentSum = 1; currentSum <= target; currentSum++) {
-            for (int num : nums) {
-                // If the current number can be a part of the currentSum
-                if (currentSum - num >= 0) {
-                    dp[currentSum] += dp[currentSum - num];
+        //Make a clone and sort
+        int[] candidates=nums.clone();
+        Arrays.sort(candidates);
+
+        //Set up DP array
+        int n=nums.length;
+        // int[] dp=new int[n+1];
+        int[] dp=new int[target+1];
+
+        //Base case dp
+        dp[0]=1;
+
+        //Outer array with the sub targets
+        for(int subtarget=1;subtarget<=target;subtarget++){
+            int ways=0;
+            for(int candidate :candidates){
+
+                if(candidate>subtarget){
+                    break;
                 }
+
+
+                int additionalWays=dp[subtarget-candidate];
+                ways+=additionalWays;
             }
+            dp[subtarget]=ways;
         }
 
         return dp[target];
     }
 }
+
+
+// // // //Gemini solution
+// class Solution {
+//     public int combinationSum4(int[] nums, int target) {
+//         // Edge case: if nums is null or empty, no combinations can be formed
+//         if (nums == null || nums.length == 0) {
+//             return 0;
+//         }
+
+//         // dp[i] represents the number of combinations that sum up to i
+//          int[] dp = new int[target + 1];
+
+//         // Base case: 1 way to reach sum 0 (choose no elements)
+//         dp[0] = 1;
+
+//         // Build the DP table bottom-up
+//         for (int currentSum = 1; currentSum <= target; currentSum++) {
+//             for (int num : nums) {
+//                 // If the current number can be a part of the currentSum
+//                 if (currentSum - num >= 0) {
+//                     dp[currentSum] += dp[currentSum - num];
+//                 }
+//             }
+//         }
+
+//         return dp[target];
+//     }
+// }
 
 
 
