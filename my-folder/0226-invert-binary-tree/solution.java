@@ -46,7 +46,7 @@ class Solution {
         if(root == null){
             return null;
         }
-        
+
         bfs.offer(root);
 
         while( !bfs.isEmpty() ){
@@ -74,3 +74,94 @@ class Solution {
     }
 
 }
+
+//Gemini solution
+
+// /**
+//  * Definition for a binary tree node.
+//  */
+// final class TreeNode {
+//     int val;
+//     TreeNode left;
+//     TreeNode right;
+
+//     TreeNode(int val) {
+//         this.val = val;
+//     }
+
+//     TreeNode(int val, TreeNode left, TreeNode right) {
+//         this.val = val;
+//         this.left = left;
+//         this.right = right;
+//     }
+// }
+
+// public final class TreeInverter {
+
+//     private TreeInverter() {
+//         // Prevent instantiation of utility class
+//     }
+
+//     /**
+//      * Inverts a binary tree in-place using Depth-First Search (DFS).
+//      * <p>
+//      * Optimal for balanced or shallow trees. Vulnerable to StackOverflowError
+//      * on pathologically skewed trees (depth &gt; ~8000).
+//      *
+//      * @param root the root of the binary tree
+//      * @return the root of the inverted tree, or {@code null} if input is null
+//      */
+//     public static TreeNode invertTreeRecursive(TreeNode root) {
+//         if (root == null) {
+//             return null;
+//         }
+
+//         // Divide: invert both subtrees recursively
+//         TreeNode invertedLeft = invertTreeRecursive(root.left);
+//         TreeNode invertedRight = invertTreeRecursive(root.right);
+
+//         // Conquer: swap left and right pointers
+//         root.left = invertedRight;
+//         root.right = invertedLeft;
+
+//         return root;
+//     }
+
+//     /**
+//      * Inverts a binary tree in-place using Breadth-First Search (BFS).
+//      * <p>
+//      * Production-safe implementation: converts recursion stack allocation to heap
+//      * allocation, eliminating the risk of thread stack exhaustion.
+//      *
+//      * @param root the root of the binary tree
+//      * @return the root of the inverted tree, or {@code null} if input is null
+//      */
+//     public static TreeNode invertTreeIterative(TreeNode root) {
+//         if (root == null) {
+//             return null;
+//         }
+
+//         // ArrayDeque is faster and uses less memory than LinkedList as a queue
+//         Queue<TreeNode> queue = new ArrayDeque<>();
+//         queue.offer(root);
+
+//         while (!queue.isEmpty()) {
+//             TreeNode current = queue.poll();
+
+//             // Mutate pointers: swap current node&apos;s immediate children
+//             TreeNode temp = current.left;
+//             current.left = current.right;
+//             current.right = temp;
+
+//             // Enqueue non-null children for subsequent level-order processing
+//             if (current.left != null) {
+//                 queue.offer(current.left);
+//             }
+//             if (current.right != null) {
+//                 queue.offer(current.right);
+//             }
+//         }
+
+//         return root;
+//     }
+// }
