@@ -14,6 +14,48 @@
  * }
  */
 
+ //2nd Attempt
+class Solution {
+
+    //Recursive approach
+    public boolean isValidBST(TreeNode root) {
+        
+        //DFS inorder traversal and return false as soon as the increasing condition is violated
+        //O(H) O(log N)
+        //Avoid local comparison
+        //
+
+        return isValidBstRecursive(root, null, null);
+
+    }
+
+    private boolean isValidBstRecursive(TreeNode root, Integer lLt, Integer rLt){
+        
+        /**
+        *   root
+         */
+
+        if(root == null){
+            return true;
+        }
+
+        //Check whether current node is not invalid
+        if(lLt != null && root.val<=lLt){
+            return false;
+        }
+
+        if(rLt != null && root.val>=rLt){
+            return false;
+        }
+        //I need to move to the left of rigt and not call the recursion on the same root
+        // return  isValidBstRecursive(root, lLt, root.val) && isValidBstRecursive(root,  root.val, rLt);
+        return  isValidBstRecursive(root.left, lLt, root.val) && isValidBstRecursive(root.right,  root.val, rLt);
+
+
+    }
+}
+
+
 //  //Attempt 1
 //  //16 min
 // //Passing the range 
@@ -50,44 +92,44 @@
 //     }
 // }
 
-//Attempt 1 
-//Using stack inorder traversal
-//22 min
-class Solution {
-    public boolean isValidBST(TreeNode root) {
+// // Attempt 1 
+// // Using stack inorder traversal
+// // 22 min
+// class Solution {
+//     public boolean isValidBST(TreeNode root) {
 
-        //Inorder traversal using stack
+//         //Inorder traversal using stack
 
-        Deque<TreeNode> inorder =new ArrayDeque<>();
-        //Local check 
-        TreeNode prev=null;
-        TreeNode current=root;
+//         Deque<TreeNode> inorder =new ArrayDeque<>();
+//         //Local check 
+//         TreeNode prev=null;
+//         TreeNode current=root;
 
-        while(current !=null || !inorder.isEmpty()){
+//         while(current !=null || !inorder.isEmpty()){
 
-            //Reach to the left most of the root adding to the stack
-            while(current!=null){
-                inorder.push(current);
-                current=current.left;
-            }
+//             //Reach to the left most of the root adding to the stack
+//             while(current!=null){
+//                 inorder.push(current);
+//                 current=current.left;
+//             }
 
-            //Now I'm at the leftmost node and need to compare whether this node is valid
-            current = inorder.pop();
+//             //Now I'm at the leftmost node and need to compare whether this node is valid
+//             current = inorder.pop();
 
-            if(prev!=null && prev.val>=current.val){
-                return false;
-            }
+//             if(prev!=null && prev.val>=current.val){
+//                 return false;
+//             }
 
-            prev=current;
+//             prev=current;
 
-            //Now I've processed the current node .Move to the right node
-            current=current.right;
-        }
+//             //Now I've processed the current node .Move to the right node
+//             current=current.right;
+//         }
 
-        return true;
+//         return true;
         
-    }
-}
+//     }
+// }
 
 // /**
 //  * Definition for a binary tree node.
@@ -111,7 +153,7 @@ class Solution {
 //         //I have to take care of the state in each iteration
 //         //We cannot use either Integer of Reference valible to pass the state as it is getting updated during the call.
 //         TreeNode prev=null;
-//         //I need to pass the state array
+//         //I need to pass the state array 
 //         Integer[] prevState=new Integer[1];
 //         return isValid(root,prevState);
         
@@ -163,7 +205,6 @@ class Solution {
 //         // while(!inorder.isEmpty() && current!=null/*To avoid first null*/)This will fail because inorder is empty in first iteration .So we process if there are nodes in inorder or current in not null
 //         while(!inorder.isEmpty() || current!=null/*To avoid first null*/){
 //             //This will effectively push right and root node to the stack
-//             //inorder.push(current); This need to be inside the if condition to avoid pushing null
 
 //             //This will not be the smallest node so no need to pop the parent immediately .I need to pop the leftmost node
 //             // TreeNode current =inorder.pop();
