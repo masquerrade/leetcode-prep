@@ -15,6 +15,7 @@
  */
 
  //2nd Attempt
+ //22 min
 class Solution {
 
     //Recursive approach
@@ -25,7 +26,8 @@ class Solution {
         //Avoid local comparison
         //
 
-        return isValidBstRecursive(root, null, null);
+        // return isValidBstRecursive(root, null, null);
+        return isValidBstIterative(root);
 
     }
 
@@ -53,6 +55,43 @@ class Solution {
 
 
     }
+
+    private boolean isValidBstIterative(TreeNode root){
+        
+
+        //Stact to do dfs inorder traversal\
+        Deque<TreeNode> stack= new ArrayDeque<>();
+        TreeNode prev=null;
+
+        while(root != null || !stack.isEmpty() ){
+
+            //To the left most node 
+
+            while(root!=null){
+                stack.push(root);
+                root=root.left;
+            }
+
+            TreeNode current= stack.pop();
+
+            if(prev != null && prev.val>=current.val){
+                return false;
+            }
+
+            prev=current;
+            // root=root.right;
+            //Here root = current.right as currently root will be null
+            root=current.right;
+
+
+        }
+
+        //root==null and stack is enpty
+        return true;
+
+    }
+
+
 }
 
 
