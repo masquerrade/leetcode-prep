@@ -13,6 +13,7 @@
  *     }
  * }
  */
+ //Attempt 1 - 10 min
 class Solution {
     public int kthSmallest(TreeNode root, int k) {
         
