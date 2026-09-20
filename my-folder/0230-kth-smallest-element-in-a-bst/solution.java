@@ -13,66 +13,83 @@
  *     }
  * }
  */
-
- //Recursive approach
 class Solution {
     public int kthSmallest(TreeNode root, int k) {
-
-        //I need back the kth smallest element
-        //The helper function in each level needs k, current node and it needs to return the kth node
-        //So here we'll use state array so that sibling and parent call are aware of the state
-
-        int[] state=new int[]{k,-1};
-
-        findKthNode(root,state);
-
-        return state[1];
-
-    }
-
-    private void findKthNode(TreeNode node,int [] state){
-
-        //If node=null or k=0 return
-        if(node==null || state[0]==0){
-            return;
+        
+        if(root == null || k<=0 ){
+            return -1;
         }
 
-        //First I  need to reach to the leftmost node
-        findKthNode(node.left,state);
+        // Deque<TreeNode> stack= new TreeNode<>(); You're declaring a queue and not a treenode
+        Deque<TreeNode> stack= new ArrayDeque<>();
+        int nodesRem=k;
 
-        if(state[0]==0){
-            return ;
+        while(root != null || !stack.isEmpty()){
+
+            while(root != null){
+                stack.push(root);
+                root=root.left;
+            }
+
+            TreeNode currentNode= stack.pop();
+
+
+            if(--nodesRem == 0){
+                return currentNode.val;
+            }
+
+            root=currentNode.right;
         }
 
-        //Do the required work with the current node and trust the recursion to do the remaining work
-        state[0]--;
-        if(state[0]==0){
-            state[1]=node.val;
-            return;
-        }
-
-        //Now I need to look at the right side of the current node
-        findKthNode(node.right,state);
-
+        return -1;
     }
 }
 
 
-// /**
-//  * Definition for a binary tree node.
-//  * public class TreeNode {
-//  *     int val;
-//  *     TreeNode left;
-//  *     TreeNode right;
-//  *     TreeNode() {}
-//  *     TreeNode(int val) { this.val = val; }
-//  *     TreeNode(int val, TreeNode left, TreeNode right) {
-//  *         this.val = val;
-//  *         this.left = left;
-//  *         this.right = right;
-//  *     }
-//  * }
-//  */
+
+//  //Recursive approach
+// class Solution {
+//     public int kthSmallest(TreeNode root, int k) {
+
+//         //I need back the kth smallest element
+//         //The helper function in each level needs k, current node and it needs to return the kth node
+//         //So here we'll use state array so that sibling and parent call are aware of the state
+
+//         int[] state=new int[]{k,-1};
+
+//         findKthNode(root,state);
+
+//         return state[1];
+
+//     }
+
+//     private void findKthNode(TreeNode node,int [] state){
+
+//         //If node=null or k=0 return
+//         if(node==null || state[0]==0){
+//             return;
+//         }
+
+//         //First I  need to reach to the leftmost node
+//         findKthNode(node.left,state);
+
+//         if(state[0]==0){
+//             return ;
+//         }
+
+//         //Do the required work with the current node and trust the recursion to do the remaining work
+//         state[0]--;
+//         if(state[0]==0){
+//             state[1]=node.val;
+//             return;
+//         }
+
+//         //Now I need to look at the right side of the current node
+//         findKthNode(node.right,state);
+
+//     }
+// }
+
 
 // //Modified node approach
 // public class TreeNode{
@@ -126,21 +143,6 @@ class Solution {
 //     }
 // }
 
-// /**
-//  * Definition for a binary tree node.
-//  * public class TreeNode {
-//  *     int val;
-//  *     TreeNode left;
-//  *     TreeNode right;
-//  *     TreeNode() {}
-//  *     TreeNode(int val) { this.val = val; }
-//  *     TreeNode(int val, TreeNode left, TreeNode right) {
-//  *         this.val = val;
-//  *         this.left = left;
-//  *         this.right = right;
-//  *     }
-//  * }
-//  */
 
 // //Stack approach
 // class Solution {
