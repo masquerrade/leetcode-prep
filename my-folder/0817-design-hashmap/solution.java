@@ -1,135 +1,98 @@
 class MyHashMap {
 
-    // I need a list  and list node
-    // Array of lists 
-    private static class Node{
-        //Node will have the key value also
-        int key;
+    //Inner class to define the node / content of the bucket
+    private static final class Node{
+
+        //Storing a key is important as it will be used in case of chaining to identify the value
+        final int key;
         int value;
         Node next;
-        
-        Node(int key,int val,Node next){
-            this.key=key;
-            this.value=val;
-            //If I use this then I need to Provide the next node when creating node
-            this.next=next;
+
+        //Constructor to initialize my node
+        Node(int key,int value){
+            this.key = key;
+            this.value = value;
         }
+
     }
 
-    private final Node [] bucket;
-    private final int SIZE=1000;
+    //Member variables 
+    //Array of buckets of a fixed size for seperate chaining
+    private static final int BUCKET_COUNT=2069;
+    private final Node[] buckets;
+
 
     public MyHashMap() {
-        // The capacity cannot incerease because I'm using the hash function to find the index
-        bucket=new Node[SIZE];
+
+        //Initialise the hasmap as array of Node
+        buckets = new Node[BUCKET_COUNT];
+        //Initialize each node with a dummy node
+        for(int i=0;i<BUCKET_COUNT;i++){
+            buckets[i]=new Node(-1,-1);
+        }
+
         
     }
 
-    //In put what I need to do is check if the key is already present . If it is present update the value or add the new value    
-
+    
     public void put(int key, int value) {
-
-        //First I need to calculate the hash using the hash function
-        int index=hash(key);
-        //Get the node at this key
-
-         Node node=findNode(index,key);
-
-         if(node!=null){
-            node.value=value;
-         }
-         else{
-            //I need to create new node with the next node as bucket[index] and then make the bucket[index] as the current node
-            Node newNode=new Node(key,value,bucket[index]);
-            bucket[index]=newNode;
-
-         }
-
-        // Node node=bucket[index];
-
-        //This whole logic can be done in the find node function
-        // //If it is null add a node if not null 
         
-        // while(node!=null){
-        //     if(node.key==key){
-        //         node.value=value;
-        //         return 
-        //     }
-        //     node=node.next;
-        // }
-
+        //Get the previous node with the key
+        Node prev=getPreviousNode(key);
+        
+        //Updeate if existing or add if new
+        if(prev.next == null){
+            prev.next=new Node(key,value);
+        }
+        else{
+            prev.next.value=value;
+        }
+                
     }
     
     public int get(int key) {
 
-        //I'll just call the find node function
-        //If it returns null then node is not present
+        //Find the prev node as it is safe
+        Node prev=getPreviousNode(key);
 
-        int index=hash(key);
-        Node n=findNode(index,key);
-        if(n==null){
-            return -1;
-        }
-        else{
-            return n.value;
-        }
-
-
-        
+        // val if exists . -1 if not
+        return (prev.next==null)?-1:prev.next.value;
     }
     
     public void remove(int key) {
 
-        //I need to remove node from both array as well as linked list
-        //For SLL I need the previous node as well as the current node to remove the current node so I need to traverse the Linked List
-        //Using key I need to get the index then traverse the LL
+        //Find the prev node as it is safe
+        Node prev=getPreviousNode(key);
 
-        int index=hash(key);
-        Node node = bucket[index];
-
-        if(node==null){
-            return ;
+        //Remove the next node
+        if(prev.next != null){
+            prev.next=prev.next.next;
         }
-
-        if(node.key==key){
-            bucket[index]=node.next;
-        }
-
-        while(node.next!=null){
-            if(node.next.key==key){
-                //This creates a self loop
-                // node.next.next=node.next;
-                node.next=node.next.next;
-                //Here I need to return because node.next.next can be null
-                return;
-            }
-            //If key is not found check the next node
-            node=node.next;
-        }
-
         
     }
 
-
-    //Helper functions
-
-    public int hash(int key){
-        return key%SIZE;
+    private int getBucketIndex(int key){
+        return (key & 0x7fffffff) % BUCKET_COUNT; 
     }
 
-    public Node findNode(int index,int key){
-        //If find node return it or return null
-        Node node=bucket[index];
+    private Node getPreviousNode(int key){
 
-        while(node!=null){
-            if(key==node.key){
-                return node;
+        int index = getBucketIndex(key);
+
+        Node dummynode = buckets[index];
+
+        Node curr=dummynode;
+        Node prev=dummynode;
+
+        while(curr != null){
+            if(curr.key == key){
+                return prev;
             }
-
-            node=node.next;
+            prev=curr;
+            curr=curr.next;
         }
 
-        return null;
+        return prev;
 
     }
 }
@@ -141,6 +104,143 @@ class MyHashMap {
  * int param_2 = obj.get(key);
  * obj.remove(key);
  */
+
+
+//  class MyHashMap {
+
+//     // I need a list  and list node
+//     // Array of lists 
+//     private static class Node{
+//         //Node will have the key value also
+//         int key;
+//         int value;
+//         Node next;
+        
+//         Node(int key,int val,Node next){
+//             this.key=key;
+//             this.value=val;
+//             //If I use this then I need to Provide the next node when creating node
+//             this.next=next;
+//         }
+//     }
+
+//     private final Node [] bucket;
+//     private final int SIZE=1000;
+
+//     public MyHashMap() {
+//         // The capacity cannot incerease because I'm using the hash function to find the index
+//         bucket=new Node[SIZE];
+        
+//     }
+
+//     //In put what I need to do is check if the key is already present . If it is present update the value or add the new value    
+
+//     public void put(int key, int value) {
+
+//         //First I need to calculate the hash using the hash function
+//         int index=hash(key);
+//         //Get the node at this key
+
+//          Node node=findNode(index,key);
+
+//          if(node!=null){
+//             node.value=value;
+//          }
+//          else{
+//             //I need to create new node with the next node as bucket[index] and then make the bucket[index] as the current node
+//             Node newNode=new Node(key,value,bucket[index]);
+//             bucket[index]=newNode;
+
+//          }
+
+//         // Node node=bucket[index];
+
+//         //This whole logic can be done in the find node function
+//         // //If it is null add a node if not null 
+        
+//         // while(node!=null){
+//         //     if(node.key==key){
+//         //         node.value=value;
+//         //         return 
+//         //     }
+//         //     node=node.next;
+//         // }
+
+//     }
+    
+//     public int get(int key) {
+
+//         //I'll just call the find node function
+//         //If it returns null then node is not present
+
+//         int index=hash(key);
+//         Node n=findNode(index,key);
+//         if(n==null){
+//             return -1;
+//         }
+//         else{
+//             return n.value;
+//         }
+
+
+        
+//     }
+    
+//     public void remove(int key) {
+
+//         //I need to remove node from both array as well as linked list
+//         //For SLL I need the previous node as well as the current node to remove the current node so I need to traverse the Linked List
+//         //Using key I need to get the index then traverse the LL
+
+//         int index=hash(key);
+//         Node node = bucket[index];
+
+//         if(node==null){
+//             return ;
+//         }
+
+//         if(node.key==key){
+//             bucket[index]=node.next;
+//         }
+
+//         while(node.next!=null){
+//             if(node.next.key==key){
+//                 //This creates a self loop
+//                 // node.next.next=node.next;
+//                 node.next=node.next.next;
+//                 //Here I need to return because node.next.next can be null
+//                 return;
+//             }
+//             //If key is not found check the next node
+//             node=node.next;
+//         }
+
+        
+//     }
+
+
+//     //Helper functions
+
+//     public int hash(int key){
+//         return key%SIZE;
+//     }
+
+//     public Node findNode(int index,int key){
+//         //If find node return it or return null
+//         Node node=bucket[index];
+
+//         while(node!=null){
+//             if(key==node.key){
+//                 return node;
+//             }
+
+//             node=node.next;
+//         }
+
+//         return null;
+
+//     }
+// }
 
 
 //  class MyHashMap {
