@@ -1,101 +1,198 @@
 class MyHashMap {
 
-    //Inner class to define the node / content of the bucket
-    private static final class Node{
-
-        //Storing a key is important as it will be used in case of chaining to identify the value
+    /**
+     * Internal node representing a key-value pair in a singly-linked bucket chain.
+     */
+    private static final class Node {
         final int key;
-        int value;
+        int val;
         Node next;
 
-        //Constructor to initialize my node
-        Node(int key,int value){
+        Node(int key, int val, Node next) {
             this.key = key;
-            this.value = value;
+            this.val = val;
+            this.next = next;
         }
-
     }
 
-    //Member variables 
-    //Array of buckets of a fixed size for seperate chaining
-    private static final int BUCKET_COUNT=2069;
+    // Prime modulus reduces collision clustering caused by common key strides.
+    // 2069 provides ~480 keys/bucket at max 10^6 entries (LC constraints), 
+    // maintaining low chain length for interview constraints without rehashing bloat.
+    private static final int BUCKET_COUNT = 2069;
+
+    // Fixed array of bucket heads. Each bucket holds a dummy sentinel node.
     private final Node[] buckets;
 
-
     public MyHashMap() {
-
-        //Initialise the hasmap as array of Node
-        buckets = new Node[BUCKET_COUNT];
-        //Initialize each node with a dummy node
-        for(int i=0;i<BUCKET_COUNT;i++){
-            buckets[i]=new Node(-1,-1);
+        this.buckets = new Node[BUCKET_COUNT];
+        // Pre-allocate sentinel dummy nodes to remove null-checks during runtime operations.
+        for (int i = 0; i < BUCKET_COUNT; i++) {
+            this.buckets[i] = new Node(-1, -1, null);
         }
-
-        
     }
 
-    
-    public void put(int key, int value) {
-        
-        //Get the previous node with the key
-        Node prev=getPreviousNode(key);
-        
-        //Updeate if existing or add if new
-        if(prev.next == null){
-            prev.next=new Node(key,value);
+    /**
+     * Maps an integer key to its deterministic bucket index.
+     * Uses bitwise masking to guarantee a non-negative index even if keys are negative.
+     */
+    private int getBucketIndex(int key) {
+        //return (key & 0x7fffffff) % BUCKET_COUNT;
+	   return Math.abs(key) % BUCKET_COUNT;
+}
+
+
+    /**
+     * Traverses a bucket chain to find the node PRECEDING the target key.
+     * 
+     * Invariant maintained:
+     * - Returns the node 'prev' such that either prev.next.key == targetKey,
+     *   or prev.next == null (targetKey does not exist in chain).
+     */
+    private Node findPredecessor(Node dummyHead, int key) {
+        Node prev = dummyHead;
+        Node curr = dummyHead.next;
+
+        // Loop Invariant: All examined nodes up to and including 'prev' do not match 'key'.
+        while (curr != null && curr.key != key) {
+            prev = curr;
+            curr = curr.next;
         }
-        else{
-            prev.next.value=value;
-        }
-                
-    }
-    
-    public int get(int key) {
-
-        //Find the prev node as it is safe
-        Node prev=getPreviousNode(key);
-
-        // val if exists . -1 if not
-        return (prev.next==null)?-1:prev.next.value;
-    }
-    
-    public void remove(int key) {
-
-        //Find the prev node as it is safe
-        Node prev=getPreviousNode(key);
-
-        //Remove the next node
-        if(prev.next != null){
-            prev.next=prev.next.next;
-        }
-        
-    }
-
-    private int getBucketIndex(int key){
-        return (key & 0x7fffffff) % BUCKET_COUNT; 
-    }
-
-    private Node getPreviousNode(int key){
-
-        int index = getBucketIndex(key);
-
-        Node dummynode = buckets[index];
-
-        Node curr=dummynode;
-        Node prev=dummynode;
-
-        while(curr != null){
-            if(curr.key == key){
-                return prev;
-            }
-            prev=curr;
-            curr=curr.next;
-        }
-
         return prev;
+    }
 
+    public void put(int key, int value) {
+        int index = getBucketIndex(key);
+        Node prev = findPredecessor(buckets[index], key);
+
+        if (prev.next != null) {
+            // Case 1: Key already exists. Update value in-place.
+            prev.next.val = value;
+        } else {
+            // Case 2: Key does not exist. Append new node at tail of chain.
+            // Linking via prev.next correctly appends without needing head-null checks.
+            prev.next = new Node(key, value, null);
+        }
+    }
+
+    public int get(int key) {
+        int index = getBucketIndex(key);
+        Node prev = findPredecessor(buckets[index], key);
+
+        // If prev.next exists, target node is found. Otherwise, return -1.
+        return (prev.next != null) ? prev.next.val : -1;
+    }
+
+    public void remove(int key) {
+        int index = getBucketIndex(key);
+        Node prev = findPredecessor(buckets[index], key);
+
+        if (prev.next != null) {
+            // Unlink target node: garbage collector reclaims prev.next.
+            // Sentinel guarantees 'prev' is never null, making this safe even for the first real node.
+            prev.next = prev.next.next;
+        }
     }
 }
+
+// //My solution separate chaining
+// class MyHashMap {
+
+//     //Inner class to define the node / content of the bucket
+//     private static final class Node{
+
+//         //Storing a key is important as it will be used in case of chaining to identify the value
+//         final int key;
+//         int value;
+//         Node next;
+
+//         //Constructor to initialize my node
+//         Node(int key,int value){
+//             this.key = key;
+//             this.value = value;
+//         }
+
+//     }
+
+//     //Member variables 
+//     //Array of buckets of a fixed size for seperate chaining
+//     private static final int BUCKET_COUNT=2069;
+//     private final Node[] buckets;
+
+
+//     public MyHashMap() {
+
+//         //Initialise the hasmap as array of Node
+//         buckets = new Node[BUCKET_COUNT];
+//         //Initialize each node with a dummy node
+//         for(int i=0;i<BUCKET_COUNT;i++){
+//             buckets[i]=new Node(-1,-1);
+//         }
+
+        
+//     }
+
+    
+//     public void put(int key, int value) {
+        
+//         //Get the previous node with the key
+//         Node prev=getPreviousNode(key);
+        
+//         //Updeate if existing or add if new
+//         if(prev.next == null){
+//             prev.next=new Node(key,value);
+//         }
+//         else{
+//             prev.next.value=value;
+//         }
+                
+//     }
+    
+//     public int get(int key) {
+
+//         //Find the prev node as it is safe
+//         Node prev=getPreviousNode(key);
+
+//         // val if exists . -1 if not
+//         return (prev.next==null)?-1:prev.next.value;
+//     }
+    
+//     public void remove(int key) {
+
+//         //Find the prev node as it is safe
+//         Node prev=getPreviousNode(key);
+
+//         //Remove the next node
+//         if(prev.next != null){
+//             prev.next=prev.next.next;
+//         }
+        
+//     }
+
+//     private int getBucketIndex(int key){
+//         return (key & 0x7fffffff) % BUCKET_COUNT; 
+//     }
+
+//     private Node getPreviousNode(int key){
+
+//         int index = getBucketIndex(key);
+
+//         Node dummynode = buckets[index];
+
+//         Node curr=dummynode;
+//         Node prev=dummynode;
+
+//         while(curr != null){
+//             if(curr.key == key){
+//                 return prev;
+//             }
+//             prev=curr;
+//             curr=curr.next;
+//         }
+
+//         return prev;
+
+//     }
+// }
 
 /**
  * Your MyHashMap object will be instantiated and called as such:
