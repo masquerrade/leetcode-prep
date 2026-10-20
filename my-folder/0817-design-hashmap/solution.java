@@ -1,3 +1,9 @@
+/*
+ * @lc app=leetcode id=706 lang=java
+ *
+ * [706] Design HashMap
+ */
+
 // class MyHashMap {
 
 //     //Mwmber arrays to store keys and values
@@ -472,5 +478,7 @@ class MyHashMap {
 //         }
 //     }
 // }
+
+
 
 
